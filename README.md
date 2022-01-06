@@ -1,1 +1,1 @@
-# my-express-template
+# my-typescript-express-template
