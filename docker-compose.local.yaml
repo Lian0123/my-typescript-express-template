@@ -1,0 +1,50 @@
+version: "3.8"
+services:
+  express-test-template-postgres-db:
+    image: postgres:12
+    env_file:
+      - envs/.env
+    environment:
+      - POSTGRES_DB=${POSTGRESQL_DATABASE}
+      - POSTGRES_USER=${POSTGRESQL_USER_NAME}
+      - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_TIMEZONE=${POSTGRESQL_TIMEZONE}
+    networks:
+      - express-test-template-share-network
+    ports:
+      - "${POSTGRESQL_MAPPING_PORT}:${POSTGRESQL_PORT}"
+
+  rabbitmq:
+    image: 'bitnami/rabbitmq:latest'
+    networks:
+      - express-test-template-share-network
+    env_file:
+      - envs/.env
+    ports:
+      - "${REBBITMQ_MAPPING_PORT}:${POSTGRESQL_MAPPING_PORT}"
+
+  app:
+    build: 
+      dockerfile: docker/dockerfile
+      context: .
+      args:
+        NODE_JS_VERSION: ${NODE_JS_VERSION}
+    volumes:
+      - ./:/app
+    env_file:
+      - envs/.env
+    tty: true
+    ports:
+      - "${SERVICE_PORT}:${SERVICE_PORT}"
+    depends_on:
+      - rabbitmq
+      - express-test-template-postgres-db
+    networks:
+      - express-test-template-share-network
+
+networks:
+  express-test-template-share-network:
+    name: express-test-template-share-network
+
+volumes:
+  postgresVolume:

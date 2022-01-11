@@ -10,7 +10,6 @@ export const typeOrmConfig: ConnectionOptions = {
   database: process.env.POSTGRESQL_DATABASE,
   name: process.env.POSTGRESQL_CONNECTION_NAME,
   synchronize: true,
-  migrationsRun: true,
   logging: false,
   entities: [
     'src/users/entities/**/*.ts'
