@@ -72,8 +72,6 @@ function changeEnvFile(){
     echo -e "\033[1;32m"
     echo -e "The .env file is change to ${envPath}.env.$1\n"
     echo -e "\033[0m"
-    showHelp
-
 }
 
 case "$1" in
