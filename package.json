@@ -8,12 +8,14 @@
     "start:dev": "ts-node --script-mode ./src/main.ts",
     "test:e2e": "jest \".e2e.spec.ts$\" --forceExit",
     "test": "jest \"(?<!.e2e).spec.ts$\" --detectOpenHandles --coverage",
-    "docker-compose": "docker-compose -f docker-compose.local.yaml --env-file ./envs/.env",
+    "docker-compose:local": "docker-compose -f docker-compose.local.yaml --env-file ./envs/.env",
+    "docker-compose:test": "docker-compose -f docker-compose.local.yaml --env-file ./envs/.env",
     "migration:create": "npx typeorm migration:create --dir=./src/migration/ -n ",
     "migration:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run --config ./src/typeorm-migration-config.ts",
     "migration:revert": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert --config ./src/typeorm-migration-config.ts",
     "prepare": "husky install",
-    "env:change": "./script/shell/update-env-file.sh -c"
+    "env:change": "./script/shell/update-env-file.sh -c",
+    "db:diagram": "ts-node --script-mode ./script/typescript/create-db-uml.ts"
   },
   "nodemonConfig": {
     "watch": [
