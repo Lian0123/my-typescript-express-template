@@ -44,7 +44,7 @@ services:
       - envs/.env
     tty: true
     ports:
-      - "${SERVICE_PORT}:${SERVICE_PORT}"
+      - "${SERVICE_MAPPING_PORT}:${SERVICE_PORT}"
     depends_on:
       - rabbitmq
       - express-test-template-postgres-db

@@ -25,33 +25,12 @@ services:
 
   plantuml-server:
     image: plantuml/plantuml-server
-    # command: commandcommandcommand
     env_file:
       - envs/.env
     ports:
       - '${PLANTUML_SERVER_MAPPING_PORT}:8080'
     networks:
       - express-test-template-share-network
-
-  
-  # app:
-  #   build: 
-  #     dockerfile: docker/dockerfile
-  #     context: .
-  #     args:
-  #       NODE_JS_VERSION: ${NODE_JS_VERSION}
-  #   volumes:
-  #     - ./:/app
-  #   env_file:
-  #     - envs/.env
-  #   tty: true
-  #   ports:
-  #     - "${SERVICE_PORT}:${SERVICE_PORT}"
-  #   depends_on:
-  #     - rabbitmq
-  #     - express-test-template-postgres-db
-  #   networks:
-  #     - express-test-template-share-network
 
 networks:
   express-test-template-share-network:
