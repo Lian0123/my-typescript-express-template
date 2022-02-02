@@ -3,9 +3,12 @@
   "version": "0.0.1",
   "scripts": {
     "preinstall": "chmod +x ./script/shell/*",
+    "prebuild": "rimraf dist",
     "build": "tsc",
+    "postbuild": "sh ./script/shell/update-build-file.sh",
     "lint": "eslint . --ext .ts  --fix ",
     "start:dev": "ts-node --script-mode ./src/main.ts",
+    "start:prod": "node ./dist/main.js",
     "test:e2e": "jest \".e2e.spec.ts$\" --forceExit",
     "test": "jest \"(?<!.e2e).spec.ts$\" --detectOpenHandles --coverage",
     "docker-compose:local": "docker-compose -f docker-compose.local.yaml --env-file ./envs/.env",
@@ -31,6 +34,7 @@
     "src/public/"
   ],
   "dependencies": {
+    "amqplib": "0.8.0",
     "body-parser": "1.19.0",
     "bull": "4.2.0",
     "class-transformer": "0.5.1",
@@ -67,14 +71,14 @@
     "reflect-metadata": "0.1.13",
     "semantic-release": "18.0.1",
     "swagger-express-ts": "1.1.0",
+    "swagger-ui-express": "4.3.0",
     "ts-jest": "27.1.2",
     "typeorm": "0.2.42-dev.cefddd9",
     "typeorm-i18n": "0.2.0-rc.1",
     "typeorm-transactional-cls-hooked": "0.1.21",
     "typescript": "4.5.4",
     "uuid": "8.3.2",
-    "valid-env": "1.1.1",
-    "swagger-ui-express": "4.3.0"
+    "valid-env": "1.1.1"
   },
   "devDependencies": {
     "@jest-mock/express": "1.4.5",
@@ -101,6 +105,7 @@
     "eslint-plugin-promise": "^5.2.0",
     "find": "0.3.0",
     "fs-extra": "10.0.0",
+    "husky": "7.0.0",
     "jasmine": "3.10.0",
     "nodemon": "2.0.15",
     "rimraf": "3.0.2",
@@ -110,7 +115,6 @@
     "typeorm-uml": "1.6.4",
     "typescript": "4.5.4",
     "webpack": "5.65.0",
-    "webpack-cli": "4.9.1",
-    "husky": "7.0.0"
+    "webpack-cli": "4.9.1"
   }
 }
