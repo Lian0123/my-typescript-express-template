@@ -18,7 +18,8 @@
     "migration:revert": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert --config ./src/typeorm-migration-config.ts",
     "prepare": "husky install",
     "env:change": "./script/shell/update-env-file.sh -c",
-    "db:diagram": "ts-node --script-mode ./script/typescript/create-db-uml.ts"
+    "db:diagram": "ts-node --script-mode ./script/typescript/create-db-uml.ts",
+    "openapi:generate": "./script/shell/create-openapi-generate.sh "
   },
   "nodemonConfig": {
     "watch": [
