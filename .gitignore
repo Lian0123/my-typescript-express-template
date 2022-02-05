@@ -106,3 +106,5 @@ dist
 
 # other 
 .vscode
+docs/swagger.json
+openapi-build
