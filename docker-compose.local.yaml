@@ -20,8 +20,12 @@ services:
       - express-test-template-share-network
     env_file:
       - envs/.env
+    environment: 
+      - "RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}"
+      - "RABBITMQ_DEFAULT_USER=${RABBITMQ_USER_NAME}"
     ports:
-      - "${REBBITMQ_MAPPING_PORT}:${REBBITMQ_PORT}"
+      - "${RABBITMQ_MONITOR_MAPPING_PORT}:${RABBITMQ_MONITOR_PORT}"
+      - "${RABBITMQ_MAPPING_PORT}:${RABBITMQ_PORT}"
 
   plantuml-server:
     image: plantuml/plantuml-server

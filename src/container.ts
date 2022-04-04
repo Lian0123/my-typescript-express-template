@@ -1,5 +1,5 @@
 import { AsyncContainerModule } from 'inversify'
-import { createConnection } from 'typeorm'
+import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection } from 'typeorm'
 import { typeOrmConfig } from './typeorm-config'
 import { Controller, TYPE } from 'inversify-express-utils'
 import { V1UserController } from './users/user.controller'
@@ -13,10 +13,27 @@ import {
 import { UserRepository } from './users/repositories/user.repository'
 import { UserAO, UsersAO } from './users/ao/user.ao'
 import { PaginationAO } from './common/ao/pagination.ao'
+import { connect as amqpCreateConnection, Connection as AmqpConnection } from 'amqplib'
+import { listenUserEvent } from './users/user.event.controller';
 
 export const containerBinding = new AsyncContainerModule(async (bind) => {
-  await createConnection(typeOrmConfig)
-  /**
+   const typeORMConnection = await typeORMCreateConnection(typeOrmConfig)
+   const rabbitMQConnection = await amqpCreateConnection(
+      `amqp://${process.env.RABBITMQ_USER_NAME}:${process.env.RABBITMQ_PASSWORD}@${process.env.RABBITMQ_MAPPING_PORT}`
+   );
+   
+   /**
+    * Connection
+    */
+   bind<TypeORMConnection>('typeORMConnection').toConstantValue(typeORMConnection)
+   bind<AmqpConnection>('rabbitMQConnection').toConstantValue(rabbitMQConnection)
+
+   /**
+    * Event Listener
+    */
+   listenUserEvent(rabbitMQConnection)
+
+   /**
      * Controller Layer
      */
   bind<Controller>(TYPE.Controller)
