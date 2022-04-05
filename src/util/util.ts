@@ -13,3 +13,11 @@ export async function clearTable(connection: Connection, table: string) {
         throw 'Not defined database type, please update /util.ts clearTable function'
     }
 }
+
+export function objectToBuffer(object: any) :Buffer {
+    return Buffer.from(JSON.stringify(object,null,4));
+}
+
+export function bufferToObject(buffer: Buffer) :any {
+    return JSON.parse(buffer.toString());
+}

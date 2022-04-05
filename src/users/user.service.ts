@@ -4,10 +4,15 @@ import { CreateOneUserDTO, UpdateOneUserDTO } from './dto/user.dto'
 import { UserRepository } from './repositories/user.repository'
 
 import 'reflect-metadata'
+import { createUserEvent } from './user.event.controller'
+import { Connection as AmqpConnection } from 'amqplib'
 
 @injectable()
 export class V1UserService {
-  constructor (@inject(UserRepository.name) private userRepository: UserRepository) {
+  constructor (
+    @inject(UserRepository.name) private userRepository: UserRepository,
+    @inject('rabbitMQConnection') private rabbitMQConnection: AmqpConnection
+  ) {
     this.userRepository = getConnection(process.env.POSTGRESQL_CONNECTION_NAME).getCustomRepository(UserRepository)
   }
 
@@ -16,7 +21,8 @@ export class V1UserService {
   }
 
   async createOneUserByDTO (dto: CreateOneUserDTO) :Promise<void> {
-    return this.userRepository.createOneByDTO(dto)
+    const userData = await this.userRepository.createOneByDTO(dto);
+    await createUserEvent(this.rabbitMQConnection, userData);
   }
 
   async updateOneUserById (dto: UpdateOneUserDTO) :Promise<void> {

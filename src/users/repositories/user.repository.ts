@@ -2,6 +2,7 @@ import { decorate, injectable } from 'inversify'
 import { EntityRepository, Repository } from 'typeorm'
 import { UserEntity } from '../entities/user.entity'
 import { CreateOneUserDTO, UpdateOneUserDTO } from '../dto/user.dto'
+import { UserPO } from '../po/user.po'
 
 import 'reflect-metadata'
 
@@ -11,12 +12,12 @@ decorate(injectable(), UserEntity)
 @injectable()
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
-  async findOneById (id: number) : Promise<any> {
+  async findOneById (id: number) : Promise<UserPO> {
     return await this.findOne({ id })
   }
 
-  async createOneByDTO (dto: CreateOneUserDTO) : Promise<void> {
-    await this.save({ ...dto })
+  async createOneByDTO (dto: CreateOneUserDTO) : Promise<UserPO> {
+    return await this.save({ ...dto })
   }
 
   async updateOneByDTO (dto: UpdateOneUserDTO) : Promise<void> {
