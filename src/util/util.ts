@@ -10,7 +10,7 @@ export async function clearTable(connection: Connection, table: string) {
     }else if( selectDatabase === 'mysql' || selectDatabase === 'mariadb' ){
         await connection.query(`ALTER TABLE ${table} AUTO_INCREMENT = 1`);
     }else{
-        throw 'Not defined database type, please update /util.ts clearTable function'
+        throw 'Not defined database type, please update /util.ts clearTable function';
     }
 }
 

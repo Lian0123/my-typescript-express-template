@@ -1,70 +1,96 @@
-import { AsyncContainerModule } from 'inversify'
-import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection } from 'typeorm'
-import { typeOrmConfig } from './typeorm-config'
-import { Controller, TYPE } from 'inversify-express-utils'
-import { V1UserController } from './users/user.controller'
-import { V1UserService } from './users/user.service'
+/* import Package */
+import pino from 'pino';
+import { connect as amqpCreateConnection, Connection as AmqpConnection } from 'amqplib';
+import { AsyncContainerModule } from 'inversify';
+import { Controller, TYPE } from 'inversify-express-utils';
+import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection } from 'typeorm';
+
+/* Controller Layer */
+import { V1AccountController } from './accounts/account.controller';
+import { listenAccountEvent } from './accounts/account.event.controller';
+
+/* Service Layer */
+import { V1AccountService } from './accounts/account.service';
+
+/* Data Transfer Object */
 import {
-  CreateUserBodyDTO,
-  CreateUsersBodyDTO,
-  FindUsersQueryDTO,
-  UpdateUserBodyDTO
-} from './users/dto/user.controller.dto'
-import { UserRepository } from './users/repositories/user.repository'
-import { UserAO, UsersAO } from './users/ao/user.ao'
-import { PaginationAO } from './common/ao/pagination.ao'
-import { connect as amqpCreateConnection, Connection as AmqpConnection } from 'amqplib'
-import { listenUserEvent } from './users/user.event.controller';
+   CreateAccountBodyDTO,
+   CreateAccountsBodyDTO,
+   FindAccountsQueryDTO,
+   UpdateAccountBodyDTO
+ } from './accounts/dto/account.controller.dto';
+
+/* Persistent Object */
+import { AccountRepository } from './accounts/repositories/account.repository';
+
+/* Application Object */
+import { AccountAO, AccountsAO } from './accounts/ao/account.ao';
+import { PaginationAO } from './common/ao/pagination.ao';
+
+/* Config */
+import { typeOrmConfig } from './typeorm-config';
+
+const {
+   RABBITMQ_USER_NAME,
+   RABBITMQ_PASSWORD,
+   RABBITMQ_MAPPING_PORT
+} = process.env;
 
 export const containerBinding = new AsyncContainerModule(async (bind) => {
-   const typeORMConnection = await typeORMCreateConnection(typeOrmConfig)
+   const typeORMConnection = await typeORMCreateConnection(typeOrmConfig);
    const rabbitMQConnection = await amqpCreateConnection(
-      `amqp://${process.env.RABBITMQ_USER_NAME}:${process.env.RABBITMQ_PASSWORD}@${process.env.RABBITMQ_MAPPING_PORT}`
+      `amqp://${RABBITMQ_USER_NAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_MAPPING_PORT}`
    );
    
    /**
     * Connection
     */
-   bind<TypeORMConnection>('typeORMConnection').toConstantValue(typeORMConnection)
-   bind<AmqpConnection>('rabbitMQConnection').toConstantValue(rabbitMQConnection)
+   bind<TypeORMConnection>('typeORMConnection').toConstantValue(typeORMConnection);
+   bind<AmqpConnection>('rabbitMQConnection').toConstantValue(rabbitMQConnection);
 
    /**
     * Event Listener
     */
-   listenUserEvent(rabbitMQConnection)
+   listenAccountEvent(rabbitMQConnection);
 
-   /**
-     * Controller Layer
-     */
+  /**
+   * Controller Layer
+   */
   bind<Controller>(TYPE.Controller)
-    .to(V1UserController)
+    .to(V1AccountController)
     .inSingletonScope()
-    .whenTargetNamed(V1UserController.TARGET_NAME)
+    .whenTargetNamed(V1AccountController.TARGET_NAME);
 
   /**
-     * Service Layer
-     */
-  bind<V1UserService>(V1UserService.name)
-    .to(V1UserService)
-    .inSingletonScope()
+    * Service Layer
+    */
+  bind<V1AccountService>(V1AccountService.name)
+    .to(V1AccountService)
+    .inSingletonScope();
 
   /**
-     * Repository Layer
-     */
-  bind<UserRepository>(UserRepository.name).to(UserRepository)
+   * Repository Layer
+   */
+  bind<AccountRepository>(AccountRepository.name).to(AccountRepository);
 
   /**
-     * DTO
-     */
-  bind<CreateUserBodyDTO>(CreateUserBodyDTO.name).to(CreateUserBodyDTO)
-  bind<UpdateUserBodyDTO>(UpdateUserBodyDTO.name).to(UpdateUserBodyDTO)
-  bind<FindUsersQueryDTO>(FindUsersQueryDTO.name).to(FindUsersQueryDTO)
-  bind<CreateUsersBodyDTO>(CreateUsersBodyDTO.name).to(CreateUsersBodyDTO)
+   * DTO
+   */
+  bind<CreateAccountBodyDTO>(CreateAccountBodyDTO.name).to(CreateAccountBodyDTO);
+  bind<UpdateAccountBodyDTO>(UpdateAccountBodyDTO.name).to(UpdateAccountBodyDTO);
+  bind<FindAccountsQueryDTO>(FindAccountsQueryDTO.name).to(FindAccountsQueryDTO);
+  bind<CreateAccountsBodyDTO>(CreateAccountsBodyDTO.name).to(CreateAccountsBodyDTO);
 
   /**
-     * AO
-     */
-  bind<UserAO>(UserAO.name).to(UserAO)
-  bind<UsersAO>(UsersAO.name).to(UsersAO)
-  bind<PaginationAO>(PaginationAO.name).to(PaginationAO)
-})
+   * AO
+   */
+  bind<AccountAO>(AccountAO.name).to(AccountAO);
+  bind<AccountsAO>(AccountsAO.name).to(AccountsAO);
+  bind<PaginationAO>(PaginationAO.name).to(PaginationAO);
+
+  /**
+   * logger
+   */
+   bind<pino.Logger>('Logger').toConstantValue(pino());
+
+});

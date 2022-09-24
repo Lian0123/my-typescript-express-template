@@ -1,3 +1,3 @@
-import { config } from 'dotenv'
+import { config } from 'dotenv';
 
-config({ path: './envs/.env' })
+config({ path: './envs/.env' });

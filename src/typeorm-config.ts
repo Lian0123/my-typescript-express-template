@@ -1,18 +1,27 @@
-import { ConnectionOptions } from 'typeorm'
-import './env'
+import { ConnectionOptions } from 'typeorm';
+import './env';
+
+const {
+  POSTGRESQL_HOST,
+  POSTGRESQL_PORT,
+  POSTGRESQL_USER_NAME,
+  POSTGRESQL_PASSWORD,
+  POSTGRESQL_DATABASE,
+  POSTGRESQL_CONNECTION_NAME,
+} = process.env;
 
 export const typeOrmConfig: ConnectionOptions = {
   type: 'postgres',
-  host: process.env.POSTGRESQL_HOST,
-  port: parseInt(process.env.POSTGRESQL_PORT),
-  username: process.env.POSTGRESQL_USER_NAME,
-  password: process.env.POSTGRESQL_PASSWORD,
-  database: process.env.POSTGRESQL_DATABASE,
-  name: process.env.POSTGRESQL_CONNECTION_NAME,
+  host: POSTGRESQL_HOST,
+  port: parseInt(POSTGRESQL_PORT),
+  username: POSTGRESQL_USER_NAME,
+  password: POSTGRESQL_PASSWORD,
+  database: POSTGRESQL_DATABASE,
+  name: POSTGRESQL_CONNECTION_NAME,
   synchronize: true,
   logging: false,
   entities: [
-    'src/users/entities/**/*.ts'
+    'src/accounts/entities/**/*.ts'
   ],
   migrations: [
     'src/migrations/**/*.ts'
@@ -20,5 +29,5 @@ export const typeOrmConfig: ConnectionOptions = {
   subscribers: [
     'src/subscribers/**/*.ts'
   ],
-}
+};
 

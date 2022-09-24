@@ -5,7 +5,7 @@ export const BasicResponses = {
   400: {
     description: 'Bad Request'
   }
-}
+};
 
 export const CreateResponses = {
   201: {
@@ -14,4 +14,4 @@ export const CreateResponses = {
   400: {
     description: 'Bad Request'
   }
-}
+};
