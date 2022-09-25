@@ -1,6 +1,6 @@
-import { Expose, Transform } from 'class-transformer'
-import { IsPositive } from 'class-validator'
-import { ApiModelProperty } from 'swagger-express-ts'
+import { Expose, Transform } from 'class-transformer';
+import { IsPositive } from 'class-validator';
+import { ApiModelProperty } from 'swagger-express-ts';
 
 export class PaginationAO {
     @Expose()

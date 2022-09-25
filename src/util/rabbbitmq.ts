@@ -1,4 +1,4 @@
-import { Connection } from 'amqplib'
+import { Connection } from 'amqplib';
 import { bufferToObject, objectToBuffer } from './util';
 /**
  * Create RabbitMQ Event Utils, it will bind in container.ts
@@ -17,7 +17,7 @@ export const createRabbitMQEvent = async (connection: Connection, eventName: str
     });
     console.log(`rabbitMQ send ${eventName} is successful`);
 
-}
+};
 
 type EventHandler  = (data:any) => Promise<void>
 
@@ -44,4 +44,4 @@ export const listenRabbitMQEvent = async (connection: Connection, eventName: str
         channel.ack(msg,false);
     });
 
-}
+};
