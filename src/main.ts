@@ -1,17 +1,22 @@
+/* Import Package */
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import * as swagger from 'swagger-express-ts';
-import httpPino from 'pino-http';
 import pino from 'pino';
+import httpPino from 'pino-http';
+import { randomUUID } from 'crypto';
 import { Container } from 'inversify';
-import { containerBinding } from './container';
-import { ErrorHandler } from './common/constant/error.const';
 import { InversifyExpressServer } from 'inversify-express-utils';
 
+/* Enum & Constant */
+import { ErrorHandler } from './common/constants';
+
+/* Inject Reference */
 import 'reflect-metadata';
 
+/* Config & Environment Variables */
+import { containerBinding } from './container';
 import './env';
-import { randomUUID } from 'crypto';
 const {
   SERVICE_NAME,
   SERVICE_VERSION,
@@ -42,7 +47,7 @@ const {
         }
       }
     ));
-    // overwrite header
+    // Overwrite Headers
     app.use((request: Request, response: Response, next: express.NextFunction) => {
       request.headers['requestId'] = randomUUID();
       next();

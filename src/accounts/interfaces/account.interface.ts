@@ -1,3 +1,4 @@
+/* Enum & Constant */
 import { AccountStatusEnum, GenderEnum } from '../../common/enums';
 
 export interface IAccountBase {

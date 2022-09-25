@@ -1,4 +1,4 @@
-/* import Package */
+/* Import Package */
 import { PrimaryGeneratedColumn, Column, Entity, VersionColumn } from 'typeorm';
 
 /* Type & Interface */
@@ -8,7 +8,7 @@ import { IAccountBase } from '../interfaces/account.interface';
 import { AccountStatusEnum, GenderEnum } from '../../common/enums';
 import { ACCOUNTS_TABLE } from '../constants/account.constant';
 
-/* inversify */
+/* Inject Reference */
 import 'reflect-metadata';
 
 @Entity({ name: ACCOUNTS_TABLE })

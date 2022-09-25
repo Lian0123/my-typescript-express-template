@@ -1,8 +1,11 @@
+/* Import Package */
 import { plainToClass, Expose, Type } from 'class-transformer';
 
+/* Type Define */
 import { IAccountBase } from "../interfaces/account.interface";
 import { PaginationPO } from '../../common/po/pagination.po';
 
+/* Enum & Constant */
 import { AccountStatusEnum, GenderEnum } from '../../common/enums';
 
 export class AccountPO implements IAccountBase {

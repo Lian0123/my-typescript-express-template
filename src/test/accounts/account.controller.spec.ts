@@ -1,14 +1,26 @@
-import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection, getConnection } from 'typeorm';
+/* Import Package */
 import { connect as amqpCreateConnection, Connection as AmqpConnection } from 'amqplib';
+import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection, getConnection } from 'typeorm';
 import { getMockReq } from '@jest-mock/express';
-import { AccountStatusEnum, GenderEnum } from '../../common/enums';
-import { typeOrmConfig } from '../../typeorm-config';
+
+/* Controller Layer */
 import { V1AccountController } from '../../accounts/account.controller';
+
+/* Service Layer */
 import { V1AccountService } from '../../accounts/account.service';
+
+/* Repository Layer */
 import { AccountRepository } from '../../accounts/repositories/account.repository';
-import { clearTable } from '../../util/util';
+
+/* Define Utils */
+import { clearTable } from '../../utils';
+
+/* Enum & Constant */
+import { AccountStatusEnum, GenderEnum } from '../../common/enums';
 import { ACCOUNTS_TABLE } from '../../accounts/constants/account.constant';
 
+/* Config & Environment Variables */
+import { typeOrmConfig } from '../../typeorm-config';
 const {
   NODE_ENV,
   RABBITMQ_USER_NAME,

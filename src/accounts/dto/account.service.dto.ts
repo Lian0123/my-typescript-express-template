@@ -1,5 +1,8 @@
-import { AccountStatusEnum, GenderEnum } from '../../common/enums';
+/* Type & Interface */
 import { IAccountBase } from '../interfaces/account.interface';
+
+/* Enum & Constant */
+import { AccountStatusEnum, GenderEnum } from '../../common/enums';
 
 export class CreateOneAccountDTO implements Omit<IAccountBase,'id'|'isDeleted'|'roles'> {
     name: string;

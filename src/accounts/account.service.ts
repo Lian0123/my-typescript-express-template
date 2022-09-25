@@ -1,22 +1,22 @@
-// basic package
+/* Import Package */
 import { inject, injectable } from 'inversify';
 
-// inject member
+/* Inject Member */
 import { getConnection } from 'typeorm';
 import { Connection as AmqpConnection } from 'amqplib';
 import { AccountRepository } from './repositories/account.repository';
 
-// amqp event
+/* Controller Layer */
 import { createAccountEvent } from './account.event.controller';
 
-// type define
+/* Type Define */
 import { CreateOneAccountDTO, UpdateOneAccountDTO } from './dto/account.service.dto';
 import { AccountBO, AccountsBO } from './bo/account.bo';
 
-// inject reference
+/* Inject Reference */
 import 'reflect-metadata';
 
-// environment variables
+/* Environment Variables */
 const { POSTGRESQL_CONNECTION_NAME } = process.env;
 
 @injectable()

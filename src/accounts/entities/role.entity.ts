@@ -1,4 +1,4 @@
-/* import Package */
+/* Import Package */
 import { PrimaryGeneratedColumn, Column, Entity, VersionColumn } from 'typeorm';
 
 /* Type & Interface */
@@ -7,7 +7,7 @@ import { IRoleBase } from '../interfaces/role.interface';
 /* Enum & Constant */
 import { ROLES_TABLE } from '../constants/account.constant';
 
-/* inversify */
+/* Inject Reference */
 import 'reflect-metadata';
 
 @Entity({ name: ROLES_TABLE })

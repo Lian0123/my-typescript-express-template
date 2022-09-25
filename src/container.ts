@@ -1,4 +1,4 @@
-/* import Package */
+/* Import Package */
 import pino from 'pino';
 import { connect as amqpCreateConnection, Connection as AmqpConnection } from 'amqplib';
 import { AsyncContainerModule } from 'inversify';
@@ -12,24 +12,21 @@ import { listenAccountEvent } from './accounts/account.event.controller';
 /* Service Layer */
 import { V1AccountService } from './accounts/account.service';
 
-/* Data Transfer Object */
+/* Repository Layer */
+import { AccountRepository } from './accounts/repositories/account.repository';
+
+/* Type & Interface */
+import { AccountAO, AccountsAO } from './accounts/ao/account.ao';
+import { PaginationAO } from './common/ao/pagination.ao';
 import {
    CreateAccountBodyDTO,
    CreateAccountsBodyDTO,
    FindAccountsQueryDTO,
    UpdateAccountBodyDTO
- } from './accounts/dto/account.controller.dto';
+} from './accounts/dto/account.controller.dto';
 
-/* Persistent Object */
-import { AccountRepository } from './accounts/repositories/account.repository';
-
-/* Application Object */
-import { AccountAO, AccountsAO } from './accounts/ao/account.ao';
-import { PaginationAO } from './common/ao/pagination.ao';
-
-/* Config */
+/* Config & Environment Variables */
 import { typeOrmConfig } from './typeorm-config';
-
 const {
    RABBITMQ_USER_NAME,
    RABBITMQ_PASSWORD,
@@ -49,9 +46,9 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
    bind<AmqpConnection>('rabbitMQConnection').toConstantValue(rabbitMQConnection);
 
    /**
-    * Event Listener
+    * Event Cerate & Listener
     */
-   listenAccountEvent(rabbitMQConnection);
+    listenAccountEvent(rabbitMQConnection);
 
   /**
    * Controller Layer
@@ -74,7 +71,7 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
   bind<AccountRepository>(AccountRepository.name).to(AccountRepository);
 
   /**
-   * DTO
+   * Data Transfer Object
    */
   bind<CreateAccountBodyDTO>(CreateAccountBodyDTO.name).to(CreateAccountBodyDTO);
   bind<UpdateAccountBodyDTO>(UpdateAccountBodyDTO.name).to(UpdateAccountBodyDTO);
@@ -82,7 +79,7 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
   bind<CreateAccountsBodyDTO>(CreateAccountsBodyDTO.name).to(CreateAccountsBodyDTO);
 
   /**
-   * AO
+   * Application Object
    */
   bind<AccountAO>(AccountAO.name).to(AccountAO);
   bind<AccountsAO>(AccountsAO.name).to(AccountsAO);

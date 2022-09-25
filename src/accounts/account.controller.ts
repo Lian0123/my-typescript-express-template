@@ -1,3 +1,5 @@
+/* Import Package */
+import { plainToClass } from 'class-transformer';
 import { Request } from 'express';
 import { inject } from 'inversify';
 import {
@@ -8,13 +10,31 @@ import {
   httpPost,
   httpDelete
 } from 'inversify-express-utils';
-import { plainToClass } from 'class-transformer';
-import { ApiOperationDelete, ApiOperationGet, ApiOperationPost, ApiOperationPut, ApiPath, SwaggerDefinitionConstant } from 'swagger-express-ts';
-import { V1AccountService } from './account.service';
-import { CreateAccountBodyDTO, FindAccountsQueryDTO, UpdateAccountBodyDTO, AccountParamDTO } from './dto/account.controller.dto';
-import { AccountAO, AccountsAO } from './ao/account.ao';
-import { BasicResponses, CreateResponses } from '../common/constant/response.constant';
+import {
+  ApiOperationDelete,
+  ApiOperationGet,
+  ApiOperationPost,
+  ApiOperationPut,
+  ApiPath,
+  SwaggerDefinitionConstant
+} from 'swagger-express-ts';
 
+/* Service Layer */
+import { V1AccountService } from './account.service';
+
+/* Type & Interface */
+import { AccountAO, AccountsAO } from './ao/account.ao';
+import {
+  CreateAccountBodyDTO,
+  FindAccountsQueryDTO,
+  UpdateAccountBodyDTO,
+  AccountParamDTO
+} from './dto/account.controller.dto';
+
+/* Enum & Constant */
+import { BasicResponses, CreateResponses } from '../common/constants';
+
+/* Inject Reference */
 import 'reflect-metadata';
 
 @ApiPath({

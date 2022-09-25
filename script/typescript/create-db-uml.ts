@@ -1,9 +1,10 @@
+/* Import Package */
 import { EOL } from 'os';
-
-import { Direction, Flags, Format, TypeormUml } from 'typeorm-uml';
 import { createConnection } from 'typeorm';
-import {typeOrmConfig} from '../../src/typeorm-config';
+import { Direction, Flags, Format, TypeormUml } from 'typeorm-uml';
 
+/* Config & Environment Variables */
+import { typeOrmConfig } from '../../src/typeorm-config';
 const { PLANTUML_SERVER_MAPPING_PORT } = process.env;
 
 (async () => {
