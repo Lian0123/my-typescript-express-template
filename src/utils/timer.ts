@@ -1,17 +1,18 @@
-import {Dayjs} from 'dayjs';
+/* Import Package */
 import * as dayjs from 'dayjs';
 import * as utc from 'dayjs/plugin/utc';
 import * as timezone from 'dayjs/plugin/timezone';
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
+/* Environment Variables */
 const { DEFAULT_TIME_ZONE } = process.env;
 class GetTimeZoneOption {
     timeZone: string;
 }
 
-export const getDateTime = (dateTime?:any,option?:GetTimeZoneOption) :Dayjs => {
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+export const getDateTime = (dateTime?:any,option?:GetTimeZoneOption) :dayjs.Dayjs => {
     const {timeZone = DEFAULT_TIME_ZONE } = option;
     const getTime = dayjs(dateTime).tz(timeZone);
 

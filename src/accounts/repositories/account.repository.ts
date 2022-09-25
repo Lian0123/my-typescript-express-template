@@ -1,16 +1,17 @@
-// basic package
+/* Import Package */
 import { decorate, injectable } from 'inversify';
 
-// inject member
+/* Inject Member */
 import { EntityRepository, Repository } from 'typeorm';
 import { AccountEntity } from '../entities/account.entity';
 
-// type define
+/* Type Define */
 import { CreateOneAccountDTO, UpdateOneAccountDTO } from '../dto/account.service.dto';
 import { AccountPO, AccountsPO } from '../po/account.po';
 
-// inject reference
+/* Inject Reference */
 import 'reflect-metadata';
+
 decorate(injectable(), Repository);
 decorate(injectable(), AccountEntity);
 

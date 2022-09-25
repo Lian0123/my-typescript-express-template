@@ -1,7 +1,12 @@
+/* Import Package */
 import { Expose, plainToClass, Type } from 'class-transformer';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
-import { GenderEnum } from '../../common/enums/gender.enum';
+
+/* Type & Interface */
 import { PaginationAO } from '../../common/ao/pagination.ao';
+
+/* Enum & Constant */
+import { GenderEnum } from '../../common/enums/gender.enum';
 
 @ApiModel({
   description: 'Account AO'

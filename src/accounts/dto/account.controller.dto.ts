@@ -1,7 +1,12 @@
+/* Import Package */
 import { plainToClass, Transform, Type } from 'class-transformer';
-import { AccountStatusEnum, GenderEnum } from '../../common/enums';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
+
+/* Type & Interface */
 import { PaginationDTO } from '../../common/dto/pagination.dto';
+
+/* Enum & Constant */
+import { AccountStatusEnum, GenderEnum } from '../../common/enums';
 
 export class AccountParamDTO {
     @Transform(({ value }) => { return Number(value); })

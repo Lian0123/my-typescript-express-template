@@ -1,14 +1,22 @@
-import { Connection, getConnection } from 'typeorm';
-import { AccountRepository } from '../../accounts/repositories/account.repository';
-import { Container } from 'inversify';
-import { containerBinding } from '../../container';
-import { InversifyExpressServer } from 'inversify-express-utils';
+/* Import Package */
 import express from 'express';
 import request from 'supertest';
+import { Container } from 'inversify';
+import { InversifyExpressServer } from 'inversify-express-utils';
+import { Connection, getConnection } from 'typeorm';
+
+/* Repository Layer */
+import { AccountRepository } from '../../accounts/repositories/account.repository';
+
+/* Define Utils */
+import { clearTable } from '../../utils';
+
+/* Enum & Constant */
 import { AccountStatusEnum, GenderEnum } from '../../common/enums';
-import { clearTable } from '../../util/util';
 import { ACCOUNTS_TABLE } from '../../accounts/constants/account.constant';
 
+/* Config & Environment Variables */
+import { containerBinding } from '../../container';
 const {
   NODE_ENV,
   POSTGRESQL_CONNECTION_NAME,

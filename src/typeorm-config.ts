@@ -1,6 +1,8 @@
+/* Import Package */
 import { ConnectionOptions } from 'typeorm';
-import './env';
 
+/* Environment Variables */
+import './env';
 const {
   POSTGRESQL_HOST,
   POSTGRESQL_PORT,

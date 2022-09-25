@@ -1,12 +1,22 @@
-import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection, getConnection } from 'typeorm';
+/* Import Package */
 import { connect as amqpCreateConnection, Connection as AmqpConnection } from 'amqplib';
-import { typeOrmConfig } from '../../typeorm-config';
+import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection, getConnection } from 'typeorm';
+
+/* Service Layer */
 import { V1AccountService } from '../../accounts/account.service';
+
+/* Repository Layer */
 import { AccountRepository } from '../../accounts/repositories/account.repository';
+
+/* Define Utils */
+import { clearTable } from '../../utils';
+
+/* Enum & Constant */
 import { AccountStatusEnum, GenderEnum } from '../../common/enums';
-import { clearTable } from '../../util/util';
 import { ACCOUNTS_TABLE } from '../../accounts/constants/account.constant';
 
+/* Config & Environment Variables */
+import { typeOrmConfig } from '../../typeorm-config';
 const {
   NODE_ENV,
   RABBITMQ_USER_NAME,

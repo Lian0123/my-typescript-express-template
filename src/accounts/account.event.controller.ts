@@ -1,8 +1,15 @@
-import { Connection } from 'amqplib';
-import { AccountPO } from './po/account.po';
-import { createRabbitMQEvent, listenRabbitMQEvent } from '../util/rabbbitmq';
-import { CREATED_ACCOUNT_EVENT } from './constants/account.constant';
+/* Import Package */
 import pino from 'pino';
+import { Connection } from 'amqplib';
+
+/* Define Utils */
+import { createRabbitMQEvent, listenRabbitMQEvent } from '../utils/rabbit-mq';
+
+/* Type Define */
+import { AccountPO } from './po/account.po';
+
+/* Enum & Constant */
+import { CREATED_ACCOUNT_EVENT } from './constants/account.constant';
 
 const logger = pino();
 

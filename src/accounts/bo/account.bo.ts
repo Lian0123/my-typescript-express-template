@@ -1,4 +1,7 @@
+/* Import Package */
 import { ApiModel } from 'swagger-express-ts';
+
+/* Type & Interface */
 import { AccountPO, AccountsPO } from '../po/account.po';
 
 @ApiModel({

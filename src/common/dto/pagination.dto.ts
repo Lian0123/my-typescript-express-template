@@ -1,7 +1,9 @@
+/* Import Package */
 import { Expose, Transform } from 'class-transformer';
 import { IsOptional } from 'class-validator';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 
+/* Environment Variables */
 const {
   DEFAULT_PAGINATION_LIMIT,
   DEFAULT_PAGINATION_OFFSET,

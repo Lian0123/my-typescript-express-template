@@ -1,5 +1,9 @@
+/* Import Package */
 import { Connection } from 'amqplib';
+
+/* Define Utils */
 import { bufferToObject, objectToBuffer } from './util';
+
 /**
  * Create RabbitMQ Event Utils, it will bind in container.ts
  * @param connection 
