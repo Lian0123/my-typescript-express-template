@@ -1,9 +1,10 @@
 /* Import Package */
-import express from 'express';
-import request from 'supertest';
+import * as express from 'express';
+import * as supertest from 'supertest';
+import { randomUUID } from 'crypto';
 import { Container } from 'inversify';
-import { InversifyExpressServer } from 'inversify-express-utils';
 import { Connection, getConnection } from 'typeorm';
+import { InversifyExpressServer } from 'inversify-express-utils';
 
 /* Repository Layer */
 import { AccountRepository } from '../../accounts/repositories/account.repository';
@@ -14,6 +15,10 @@ import { clearTable } from '../../utils';
 /* Enum & Constant */
 import { AccountStatusEnum, GenderEnum } from '../../common/enums';
 import { ACCOUNTS_TABLE } from '../../accounts/constants/account.constant';
+import { ErrorHandler } from '../../common/constants';
+
+/* Inject Reference */
+import 'reflect-metadata';
 
 /* Config & Environment Variables */
 import { containerBinding } from '../../container';
@@ -27,18 +32,28 @@ let accountRepository: AccountRepository;
 let connection: Connection;
 
 
-describe('GET /hello', () => {
+describe('GET /account', () => {
   beforeAll(async (done) => {
     // init server
     const container = new Container();
     await container.loadAsync(containerBinding);
     const server = new InversifyExpressServer(container);
+
+
+    server.setConfig((app : any) => {
+      // Overwrite Headers
+      app.use((request: Request, response: Response, next: express.NextFunction) => {
+        request.headers['requestId'] = randomUUID();
+        next();
+      });
+    });
     app = server.build();
-    
+    app.use(ErrorHandler);
+
     // init connection and model
     connection = getConnection(POSTGRESQL_CONNECTION_NAME);
     accountRepository = connection.getCustomRepository(AccountRepository);
-
+    
     // need assign test environment, protect other environment data
     expect(NODE_ENV).toMatch(/^test$|^ci$/);
     done();
@@ -64,7 +79,7 @@ describe('GET /hello', () => {
       status: AccountStatusEnum.ENABLE,
     });
 
-    request(app)
+    supertest(app)
       .get('/v1/accounts/1')
       .expect('Content-Type', /json/)
       .expect(200)

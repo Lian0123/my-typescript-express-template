@@ -68,6 +68,7 @@ function changeEnvFile(){
         exit
     fi
 
+    cp -f ${envPath}.env ${envPath}.env.backup
     cp -f ${envPath}.env.$1 ${envPath}.env
     echo -e "\033[1;32m"
     echo -e "The .env file is change to ${envPath}.env.$1\n"
