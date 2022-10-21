@@ -4,6 +4,7 @@ import { connect as amqpCreateConnection, Connection as AmqpConnection } from 'a
 import { AsyncContainerModule, decorate, injectable } from 'inversify';
 import { Controller, TYPE } from 'inversify-express-utils';
 import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection, Repository } from 'typeorm';
+import { initializeTransactionalContext, BaseRepository } from 'typeorm-transactional-cls-hooked';
 
 /* Controller Layer */
 import { V1AccountController } from './accounts/account.controller';
@@ -49,6 +50,8 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
       `amqp://${RABBITMQ_USER_NAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_MAPPING_PORT}`
    );
    
+   initializeTransactionalContext(); // Initialize cls-hooked
+
    /**
     * Connection
     */
@@ -86,6 +89,7 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
    * Repository Layer
    */
   decorate(injectable(), Repository);
+  decorate(injectable(), BaseRepository);
   bind<AccountRepository>(AccountRepository.name).to(AccountRepository);
   bind<RoleRepository>(RoleRepository.name).to(RoleRepository);
   

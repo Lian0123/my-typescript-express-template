@@ -2,7 +2,8 @@
 import { decorate, injectable } from 'inversify';
 
 /* Inject Member */
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository } from 'typeorm';
+import { BaseRepository } from 'typeorm-transactional-cls-hooked';
 import { AccountEntity } from '../entities/account.entity';
 
 /* Type Define */
@@ -16,7 +17,7 @@ decorate(injectable(), AccountEntity);
 
 @injectable()
 @EntityRepository(AccountEntity)
-export class AccountRepository extends Repository<AccountEntity> {
+export class AccountRepository extends BaseRepository<AccountEntity> {
   async findOneById (id: number) : Promise<AccountPO> {
     return await this.findOne({ id });
   }

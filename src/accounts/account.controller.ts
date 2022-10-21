@@ -37,6 +37,7 @@ import { BasicResponses, CreateResponses } from '../common/constants';
 
 /* Inject Reference */
 import 'reflect-metadata';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @ApiPath({
   name: '/v1/accounts',
@@ -225,6 +226,7 @@ export class V1AccountController implements interfaces.Controller {
       },
       responses: BasicResponses
     })
+    @Transactional()
     async updateAccountRoleByDTO (
       request: Request
     ): Promise<void> {
