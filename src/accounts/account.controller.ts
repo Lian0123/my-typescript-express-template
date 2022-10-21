@@ -28,7 +28,8 @@ import {
   CreateAccountBodyDTO,
   FindAccountsQueryDTO,
   UpdateAccountBodyDTO,
-  AccountParamDTO
+  AccountParamDTO,
+  UpdateAccountRoleBodyDTO
 } from './dto/account.controller.dto';
 
 /* Enum & Constant */
@@ -49,6 +50,7 @@ export class V1AccountController implements interfaces.Controller {
         @inject(V1AccountService.name) private accountService: V1AccountService
     ) {}
 
+    @httpGet('/:id')
     @ApiOperationGet({
       summary: 'A example get one account by id',
       description: 'A example get one account by id',
@@ -66,14 +68,13 @@ export class V1AccountController implements interfaces.Controller {
       responses: {
         200: {
           description: 'OK',
-          model: 'AccountAO'
+          model: AccountAO.name
         },
         400: {
           description: 'Bad Request'
         }
       }
     })
-    @httpGet('/:id')
     async findAccountById (
       request: Request
     ): Promise<AccountAO> {
@@ -94,12 +95,12 @@ export class V1AccountController implements interfaces.Controller {
       parameters: {
         body: {
           required: true,
-          model: 'CreateAccountBodyDTO'
+          model: CreateAccountBodyDTO.name
         }
       },
       responses: CreateResponses
     })
-    async createAccountById (
+    async createAccountByDTO (
       request: Request
     ): Promise<void> {
       const bodyDTO = plainToClass(CreateAccountBodyDTO, request.body);
@@ -121,7 +122,7 @@ export class V1AccountController implements interfaces.Controller {
           }
         },
         body: {
-          model: 'UpdateAccountBodyDTO'
+          model: UpdateAccountBodyDTO.name
         }
       },
       responses: BasicResponses
@@ -161,6 +162,7 @@ export class V1AccountController implements interfaces.Controller {
       await this.accountService.deleteOneAccountById(paramDTO.id);
     }
 
+    @httpGet('/')
     @ApiOperationGet({
       summary: 'A example get many account by pagination',
       description: 'A example get many account by pagination',
@@ -184,14 +186,13 @@ export class V1AccountController implements interfaces.Controller {
       responses: {
         200: {
           description: 'OK',
-          model: 'AccountsAO'
+          model: AccountsAO.name
         },
         400: {
           description: 'Bad Request'
         }
       }
     })
-    @httpGet('/')
     async findAccountsByDTO (
       request: Request
     ): Promise<AccountsAO> {
@@ -202,5 +203,33 @@ export class V1AccountController implements interfaces.Controller {
           bodyDTO.offset
         )
       );
+    }
+
+    @httpPut('/:id/role')
+    @ApiOperationPut({
+      summary: 'A example update one account role config by id and body',
+      description: 'A example update one account role config by id and body',
+      path: '/{id}/role',
+      parameters: {
+        path: {
+          id: {
+            required: true,
+            type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+            description: 'account id number',
+            default: 1
+          }
+        },
+        body: {
+          model: UpdateAccountRoleBodyDTO.name
+        }
+      },
+      responses: BasicResponses
+    })
+    async updateAccountRoleByDTO (
+      request: Request
+    ): Promise<void> {
+      const paramDTO = plainToClass(AccountParamDTO, request.params);
+      const bodyDTO = plainToClass(UpdateAccountRoleBodyDTO, request.body);
+      await this.accountService.updateAccountRoleByDTO({ ...paramDTO, ...bodyDTO });
     }
 }

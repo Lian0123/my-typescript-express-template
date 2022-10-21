@@ -6,7 +6,7 @@ import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 import { PaginationAO } from '../../common/ao/pagination.ao';
 
 /* Enum & Constant */
-import { GenderEnum } from '../../common/enums/gender.enum';
+import { GenderEnum } from '../../common/enums';
 
 @ApiModel({
   description: 'Account AO'
@@ -21,7 +21,7 @@ export class AccountAO {
 
     @Expose()
     @ApiModelProperty({
-      description: 'Account Id',
+      description: 'Account Name',
       example: 'test'
     })
     name: string;

@@ -1,22 +1,26 @@
 /* Import Package */
 import pino from 'pino';
 import { connect as amqpCreateConnection, Connection as AmqpConnection } from 'amqplib';
-import { AsyncContainerModule } from 'inversify';
+import { AsyncContainerModule, decorate, injectable } from 'inversify';
 import { Controller, TYPE } from 'inversify-express-utils';
-import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection } from 'typeorm';
+import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection, Repository } from 'typeorm';
 
 /* Controller Layer */
 import { V1AccountController } from './accounts/account.controller';
+import { V1RoleController } from './accounts/role.controller';
 import { listenAccountEvent } from './accounts/account.event.controller';
 
 /* Service Layer */
 import { V1AccountService } from './accounts/account.service';
+import { V1RoleService } from './accounts/role.service';
 
 /* Repository Layer */
 import { AccountRepository } from './accounts/repositories/account.repository';
+import { RoleRepository } from './accounts/repositories/role.repository';
 
 /* Type & Interface */
 import { AccountAO, AccountsAO } from './accounts/ao/account.ao';
+import { RoleAO, RolesAO } from './accounts/ao/role.ao';
 import { PaginationAO } from './common/ao/pagination.ao';
 import {
    CreateAccountBodyDTO,
@@ -24,6 +28,12 @@ import {
    FindAccountsQueryDTO,
    UpdateAccountBodyDTO
 } from './accounts/dto/account.controller.dto';
+import {
+   CreateRoleBodyDTO,
+   CreateRolesBodyDTO,
+   FindRolesQueryDTO,
+   UpdateRoleBodyDTO
+} from './accounts/dto/role.controller.dto';
 
 /* Config & Environment Variables */
 import { typeOrmConfig } from './typeorm-config';
@@ -45,10 +55,10 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
    bind<TypeORMConnection>('typeORMConnection').toConstantValue(typeORMConnection);
    bind<AmqpConnection>('rabbitMQConnection').toConstantValue(rabbitMQConnection);
 
-   /**
-    * Event Cerate & Listener
-    */
-    listenAccountEvent(rabbitMQConnection);
+  /**
+   * Event Cerate & Listener
+   */
+  listenAccountEvent(rabbitMQConnection);
 
   /**
    * Controller Layer
@@ -57,32 +67,47 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
     .to(V1AccountController)
     .inSingletonScope()
     .whenTargetNamed(V1AccountController.TARGET_NAME);
-
+  bind<Controller>(TYPE.Controller)
+    .to(V1RoleController)
+    .inSingletonScope()
+    .whenTargetNamed(V1RoleController.TARGET_NAME);
+    
   /**
     * Service Layer
     */
   bind<V1AccountService>(V1AccountService.name)
     .to(V1AccountService)
     .inSingletonScope();
+  bind<V1RoleService>(V1RoleService.name)
+    .to(V1RoleService)
+    .inSingletonScope();
 
   /**
    * Repository Layer
    */
+  decorate(injectable(), Repository);
   bind<AccountRepository>(AccountRepository.name).to(AccountRepository);
-
+  bind<RoleRepository>(RoleRepository.name).to(RoleRepository);
+  
   /**
    * Data Transfer Object
    */
   bind<CreateAccountBodyDTO>(CreateAccountBodyDTO.name).to(CreateAccountBodyDTO);
+  bind<CreateAccountsBodyDTO>(CreateAccountsBodyDTO.name).to(CreateAccountsBodyDTO);
   bind<UpdateAccountBodyDTO>(UpdateAccountBodyDTO.name).to(UpdateAccountBodyDTO);
   bind<FindAccountsQueryDTO>(FindAccountsQueryDTO.name).to(FindAccountsQueryDTO);
-  bind<CreateAccountsBodyDTO>(CreateAccountsBodyDTO.name).to(CreateAccountsBodyDTO);
+  bind<CreateRoleBodyDTO>(CreateRoleBodyDTO.name).to(CreateRoleBodyDTO);
+  bind<CreateRolesBodyDTO>(CreateRolesBodyDTO.name).to(CreateRolesBodyDTO);
+  bind<FindRolesQueryDTO>(FindRolesQueryDTO.name).to(FindRolesQueryDTO);
+  bind<UpdateRoleBodyDTO>(UpdateRoleBodyDTO.name).to(UpdateRoleBodyDTO);
 
   /**
    * Application Object
    */
   bind<AccountAO>(AccountAO.name).to(AccountAO);
   bind<AccountsAO>(AccountsAO.name).to(AccountsAO);
+  bind<RoleAO>(RoleAO.name).to(RoleAO);
+  bind<RolesAO>(RolesAO.name).to(RolesAO);
   bind<PaginationAO>(PaginationAO.name).to(PaginationAO);
 
   /**

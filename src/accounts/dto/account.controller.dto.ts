@@ -1,5 +1,6 @@
 /* Import Package */
 import { plainToClass, Transform, Type } from 'class-transformer';
+import { IsArray } from 'class-validator';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 
 /* Type & Interface */
@@ -66,12 +67,6 @@ export class UpdateAccountBodyDTO {
 
     @ApiModelProperty({
       description: 'Account roles',
-      example: [1,2,3],
-    })
-    roles?: number[];
-
-    @ApiModelProperty({
-      description: 'Account roles',
       enum: Object.keys(AccountStatusEnum),
       example: AccountStatusEnum.ENABLE,
     })
@@ -127,12 +122,6 @@ export class CreateAccountBodyDTO {
 
     @ApiModelProperty({
       description: 'Account roles',
-      example: [1,2,3],
-    })
-    roles: number[];
-
-    @ApiModelProperty({
-      description: 'Account roles',
       enum: Object.keys(AccountStatusEnum),
       example: AccountStatusEnum.ENABLE,
     })
@@ -155,4 +144,16 @@ export class CreateAccountsBodyDTO {
         excludeExtraneousValues: true
       });
     }
+}
+
+
+
+export class UpdateAccountRoleBodyDTO {
+  @Transform(({ value }) => value ? Array.from(new Set(value)) : undefined )
+  @IsArray()
+  @ApiModelProperty({
+    description: 'Account roles',
+    example: [1,2,3],
+  })
+  roles: number[]; 
 }

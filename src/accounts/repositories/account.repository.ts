@@ -6,13 +6,12 @@ import { EntityRepository, Repository } from 'typeorm';
 import { AccountEntity } from '../entities/account.entity';
 
 /* Type Define */
-import { CreateOneAccountDTO, UpdateOneAccountDTO } from '../dto/account.service.dto';
+import { CreateOneAccountDTO, UpdateOneAccountDTO } from '../dto/account.repository.dto';
 import { AccountPO, AccountsPO } from '../po/account.po';
 
 /* Inject Reference */
 import 'reflect-metadata';
 
-decorate(injectable(), Repository);
 decorate(injectable(), AccountEntity);
 
 @injectable()

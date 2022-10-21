@@ -59,7 +59,7 @@ const {
   const app = server.build();
 
   app.listen(SERVICE_PORT, () => {
-    logger.info('Server is running on port', parseInt(SERVICE_PORT));
+    logger.info(`Server is running on port ${SERVICE_PORT}`);
   });
 
   app.use(ErrorHandler);
