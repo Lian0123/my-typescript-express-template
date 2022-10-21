@@ -12,7 +12,7 @@
     "build": "tsc",
     "postbuild": "sh ./script/shell/update-build-file.sh",
     "lint": "eslint . --ext .ts  --fix ",
-    "start:dev": "ts-node --script-mode ./src/main.ts",
+    "start:dev": "nodemon ./src/main.ts",
     "start:prod": "node ./dist/main.js",
     "test:e2e": "jest \".e2e.spec.ts$\" --forceExit",
     "test": "jest \"(?<!.e2e).spec.ts$\" --detectOpenHandles --coverage",
@@ -28,13 +28,12 @@
   },
   "nodemonConfig": {
     "watch": [
-      "./src"
+      "./src/**/*.ts"
     ],
     "ext": "ts, html",
     "ignore": [
       "./src/public"
-    ],
-    "exec": "./node_modules/.bin/ts-node -r tsconfig-paths/register ./src"
+    ]
   },
   "eslintIgnore": [
     "src/public/"
