@@ -2,22 +2,22 @@
 import { decorate, injectable } from 'inversify';
 
 /* Inject Member */
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository } from 'typeorm';
+import { BaseRepository } from 'typeorm-transactional-cls-hooked';
 import { AccountEntity } from '../entities/account.entity';
 
 /* Type Define */
-import { CreateOneAccountDTO, UpdateOneAccountDTO } from '../dto/account.service.dto';
+import { CreateOneAccountDTO, UpdateOneAccountDTO } from '../dto/account.repository.dto';
 import { AccountPO, AccountsPO } from '../po/account.po';
 
 /* Inject Reference */
 import 'reflect-metadata';
 
-decorate(injectable(), Repository);
 decorate(injectable(), AccountEntity);
 
 @injectable()
 @EntityRepository(AccountEntity)
-export class AccountRepository extends Repository<AccountEntity> {
+export class AccountRepository extends BaseRepository<AccountEntity> {
   async findOneById (id: number) : Promise<AccountPO> {
     return await this.findOne({ id });
   }
@@ -26,8 +26,13 @@ export class AccountRepository extends Repository<AccountEntity> {
     return await this.save({ ...dto });
   }
 
-  async updateOneByDTO (dto: UpdateOneAccountDTO) : Promise<void> {
-    await this.update({ id: dto.id }, { ...dto });
+  async updateOneByDTO (dto: UpdateOneAccountDTO) : Promise<AccountPO> {
+    const rawData = await this.createQueryBuilder('accounts')
+      .update({ ...dto })
+      .where({id: dto.id})
+      .returning("*")
+      .execute();
+    return rawData.raw[0];
   }
 
   async deleteOneById (id:number) : Promise<void> {

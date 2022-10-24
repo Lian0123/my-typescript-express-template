@@ -24,9 +24,5 @@ export class UpdateOneAccountDTO {
     country?: string;
     isDeleted?: boolean;
     status?: AccountStatusEnum;
-}
-
-export class UpdateAccountRoleByDTO {
-    id: number;
-    roles: number[];
+    roles?: number[];
 }

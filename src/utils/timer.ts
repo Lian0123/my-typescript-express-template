@@ -6,15 +6,15 @@ import * as timezone from 'dayjs/plugin/timezone';
 /* Environment Variables */
 const { DEFAULT_TIME_ZONE } = process.env;
 class GetTimeZoneOption {
-    timeZone: string;
+    timeZone?: string;
 }
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const getDateTime = (dateTime?:any,option?:GetTimeZoneOption) :dayjs.Dayjs => {
-    const {timeZone = DEFAULT_TIME_ZONE } = option;
-    const getTime = dayjs(dateTime).tz(timeZone);
+export const getDateTime = (dateTime?:any, option:GetTimeZoneOption = {}) :dayjs.Dayjs => {
+    const { timeZone = DEFAULT_TIME_ZONE } = option;
+    const getTime = dayjs(dateTime).tz(timeZone).utc();
 
     if (!getTime.isValid()) {
         throw new Error('dayjs parse time error');

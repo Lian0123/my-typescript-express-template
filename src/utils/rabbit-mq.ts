@@ -1,8 +1,11 @@
 /* Import Package */
+import pino from 'pino';
 import { Connection } from 'amqplib';
 
 /* Define Utils */
 import { bufferToObject, objectToBuffer } from './util';
+
+const logger = pino();
 
 /**
  * Create RabbitMQ Event Utils, it will bind in container.ts
@@ -19,7 +22,7 @@ export const createRabbitMQEvent = async (connection: Connection, eventName: str
     channel.sendToQueue(eventName, objectToBuffer(data),{
         persistent: true
     });
-    console.log(`rabbitMQ send ${eventName} is successful`);
+    logger.info(`rabbitMQ send ${eventName} is successful`);
 
 };
 
@@ -41,9 +44,8 @@ export const listenRabbitMQEvent = async (connection: Connection, eventName: str
     channel.consume(eventName, ( msg ) => {
         const content = bufferToObject(msg.content);
         eventHandler(content).then( () => {
-            // TODO console.log for debug
-            console.log(`rabbitMQ process ${eventName} is successful`);
-            console.log(content);
+            logger.info(`rabbitMQ process ${eventName} is successful`);
+            logger.info(content);
         });
         channel.ack(msg,false);
     });

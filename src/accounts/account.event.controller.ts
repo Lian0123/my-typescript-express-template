@@ -9,26 +9,47 @@ import { createRabbitMQEvent, listenRabbitMQEvent } from '../utils/rabbit-mq';
 import { AccountPO } from './po/account.po';
 
 /* Enum & Constant */
-import { CREATED_ACCOUNT_EVENT } from './constants/account.constant';
+import { CREATED_ACCOUNT_EVENT, UPDATED_ACCOUNT_EVENT } from './constants/account.constant';
 
 const logger = pino();
 
+/**
+ * Send Event
+ */
 export const createAccountEvent = async (connection: Connection, accountData: AccountPO) => {
     await createRabbitMQEvent(connection, CREATED_ACCOUNT_EVENT, accountData);
 };
 
-export const listenAccountEvent = async (connection: Connection) => {
-    await listenRabbitMQEvent(connection, CREATED_ACCOUNT_EVENT, listenAccountEventHandler);
-    
+export const updateAccountEvent = async (connection: Connection, accountData: AccountPO) => {
+    await createRabbitMQEvent(connection, UPDATED_ACCOUNT_EVENT, accountData);
 };
 
-export const listenAccountEventHandler = async (accountData: AccountPO) :Promise<void> => {
+/**
+ * Listen Event
+ */
+export const listenAccountCreatedEvent = async (connection: Connection) => {
+    await listenRabbitMQEvent(connection, CREATED_ACCOUNT_EVENT, listenAccountCreatedEventHandler);
+};
+
+export const listenAccountCreatedEventHandler = async (accountData: AccountPO) :Promise<void> => {
     if(!accountData){
         logger.info(`rabbitMQ "${CREATED_ACCOUNT_EVENT}" not have content`);
         return;
     }
-    logger.info(`rabbitMQ "${CREATED_ACCOUNT_EVENT}" get account "${accountData.id}"`);
+    logger.info(`rabbitMQ "${CREATED_ACCOUNT_EVENT}" get account "${accountData?.id}"`);
     logger.info(accountData);
 };
 
-// TODO add heartbeat & ack 
+
+export const listenAccountUpdatedEvent = async (connection: Connection) => {
+    await listenRabbitMQEvent(connection, UPDATED_ACCOUNT_EVENT, listenAccountUpdatedEventHandler);
+};
+
+export const listenAccountUpdatedEventHandler = async (accountData: AccountPO) :Promise<void> => {
+    if(!accountData){
+        logger.info(`rabbitMQ "${UPDATED_ACCOUNT_EVENT}" not have content`);
+        return;
+    }
+    logger.info(`rabbitMQ "${UPDATED_ACCOUNT_EVENT}" get account "${accountData?.id}"`);
+    logger.info(accountData);
+};

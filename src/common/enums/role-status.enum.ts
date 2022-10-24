@@ -1,6 +1,5 @@
-export enum AccountStatusEnum {
+export enum RoleStatusEnum {
     DISABLE = 0,
     ENABLE =  1,
     INIT = 2,
-    BLOCKED = 3,
 }

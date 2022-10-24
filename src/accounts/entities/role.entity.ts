@@ -5,6 +5,7 @@ import { PrimaryGeneratedColumn, Column, Entity, VersionColumn } from 'typeorm';
 import { IRoleBase } from '../interfaces/role.interface';
 
 /* Enum & Constant */
+import { RoleStatusEnum } from '../../common/enums';
 import { ROLES_TABLE } from '../constants/account.constant';
 
 /* Inject Reference */
@@ -19,12 +20,24 @@ export class RoleEntity implements IRoleBase {
     name: string;
 
     @Column()
-    applyCount: string
+    status: RoleStatusEnum;
 
     @Column()
-    totalCount: string
+    isUnique: boolean;
 
     @Column()
+    assessStartAt: Date;
+
+    @Column()
+    assessEndAt: Date;
+
+    @Column()
+    applyCount: number
+
+    @Column({ default: 0})
+    totalCount: number
+
+    @Column({ default: false})
     isDeleted: boolean;
 
     @VersionColumn()
