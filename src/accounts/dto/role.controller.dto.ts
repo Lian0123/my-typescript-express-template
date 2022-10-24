@@ -1,5 +1,6 @@
 /* Import Package */
 import { plainToClass, Transform, Type } from 'class-transformer';
+import { IsArray, IsBoolean, IsEnum, IsISO8601, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString } from 'class-validator';
 import { getDateTime } from '../../utils';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 
@@ -15,6 +16,7 @@ export class RoleParamDTO {
       description: 'Role id',
       example: 1
     })
+    @IsNumberString()
     id: number;
 
     static plainToClass (dto:any): RoleParamDTO {
@@ -32,19 +34,25 @@ export class UpdateRoleBodyDTO {
       description: 'Role Name',
       example: RoleNameEnum.ADMIN
     })
-    name?: RoleNameEnum;
+    @IsString()
+    @IsOptional()
+    name?: string;
 
     @ApiModelProperty({
       description: 'Role Id',
-      enum: [RoleStatusEnum.DISABLE.toString(), RoleStatusEnum.ENABLE.toString(), RoleStatusEnum.INIT.toString()],
+      enum: Object.keys(RoleStatusEnum),
       example: RoleStatusEnum.INIT
     })
+    @IsEnum(RoleStatusEnum)
+    @IsOptional()
     status?: RoleStatusEnum;
 
     @ApiModelProperty({
         description: 'Role is unique for account',
         example: false
     })
+    @IsBoolean()
+    @IsOptional()
     isUnique?: boolean;
 
     @ApiModelProperty({
@@ -52,6 +60,8 @@ export class UpdateRoleBodyDTO {
       example: getDateTime()
     })
     @Transform((param :any) => param ? getDateTime(param.value) : null)
+    @IsISO8601()
+    @IsOptional()
     assessStartAt?: Date;
 
     @ApiModelProperty({
@@ -59,19 +69,17 @@ export class UpdateRoleBodyDTO {
       example: getDateTime().add(10,'day')
     })
     @Transform((param :any) => param ? getDateTime(param.value) : null)
+    @IsISO8601()
+    @IsOptional()
     assessEndAt?: Date;
 
     @ApiModelProperty({
       description: 'Role can apply count',
       example: 100
     })
+    @IsNumber()
+    @IsOptional()
     applyCount?: number;
-
-    @ApiModelProperty({
-        description: 'Role can apply total count',
-        example: 3
-    })
-    totalCount?: number;
 
     static plainToClass (dto:any): UpdateRoleBodyDTO {
       return plainToClass(UpdateRoleBodyDTO, dto, {
@@ -84,24 +92,27 @@ export class UpdateRoleBodyDTO {
   description: 'Create role body object description'
 })
 export class CreateRoleBodyDTO {
-
     @ApiModelProperty({
       description: 'Role Name',
       example: RoleNameEnum.ADMIN
     })
-    name: RoleNameEnum;
+    @IsString()
+    @IsNotEmpty()
+    name: string;
 
     @ApiModelProperty({
       description: 'Role Id',
-      enum: [RoleStatusEnum.DISABLE.toString(), RoleStatusEnum.ENABLE.toString(), RoleStatusEnum.INIT.toString()],
+      enum: Object.keys(RoleStatusEnum),
       example: RoleStatusEnum.INIT
     })
+    @IsEnum(RoleStatusEnum)
     status: RoleStatusEnum;
 
     @ApiModelProperty({
         description: 'Role is unique for account',
         example: false
     })
+    @IsBoolean()
     isUnique: boolean;
 
     @ApiModelProperty({
@@ -109,6 +120,7 @@ export class CreateRoleBodyDTO {
       example: getDateTime()
     })
     @Transform((param :any) => param ? getDateTime(param.value) : null)
+    @IsISO8601()
     assessStartAt?: Date;
 
     @ApiModelProperty({
@@ -116,12 +128,14 @@ export class CreateRoleBodyDTO {
       example: getDateTime().add(10,'day')
     })
     @Transform((param :any) => param ? getDateTime(param.value) : null)
+    @IsISO8601()
     assessEndAt?: Date;
 
     @ApiModelProperty({
       description: 'Role can apply count',
       example: 100
     })
+    @IsNumber()
     applyCount: number;
 }
 
@@ -133,6 +147,7 @@ export class CreateRolesBodyDTO {
       description: 'Role Id',
       model: 'CreateRoleBodyDTO'
     })
+    @IsArray()
     items: CreateRoleBodyDTO[];
 
     static plainToClass (dto:any): CreateRolesBodyDTO {

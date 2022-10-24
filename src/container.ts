@@ -9,7 +9,8 @@ import { initializeTransactionalContext, BaseRepository } from 'typeorm-transact
 /* Controller Layer */
 import { V1AccountController } from './accounts/account.controller';
 import { V1RoleController } from './accounts/role.controller';
-import { listenAccountEvent } from './accounts/account.event.controller';
+import { listenAccountCreatedEvent, listenAccountUpdatedEvent } from './accounts/account.event.controller';
+import { listenRoleCreatedEvent, listenRoleUpdatedEvent } from './accounts/role.event.controller';
 
 /* Service Layer */
 import { V1AccountService } from './accounts/account.service';
@@ -41,13 +42,14 @@ import { typeOrmConfig } from './typeorm-config';
 const {
    RABBITMQ_USER_NAME,
    RABBITMQ_PASSWORD,
-   RABBITMQ_MAPPING_PORT
+   RABBITMQ_MAPPING_PORT,
+   RABBITMQ_HEART_BEAT
 } = process.env;
 
 export const containerBinding = new AsyncContainerModule(async (bind) => {
    const typeORMConnection = await typeORMCreateConnection(typeOrmConfig);
    const rabbitMQConnection = await amqpCreateConnection(
-      `amqp://${RABBITMQ_USER_NAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_MAPPING_PORT}`
+      `amqp://${RABBITMQ_USER_NAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_MAPPING_PORT}?heartbeat=${RABBITMQ_HEART_BEAT}`
    );
    
    initializeTransactionalContext(); // Initialize cls-hooked
@@ -61,7 +63,10 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
   /**
    * Event Cerate & Listener
    */
-  listenAccountEvent(rabbitMQConnection);
+  listenAccountCreatedEvent(rabbitMQConnection);
+  listenAccountUpdatedEvent(rabbitMQConnection);
+  listenRoleCreatedEvent(rabbitMQConnection);
+  listenRoleUpdatedEvent(rabbitMQConnection);
 
   /**
    * Controller Layer

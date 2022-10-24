@@ -1,5 +1,8 @@
 /* Import Package */
+import pino from 'pino';
 import { Connection } from "typeorm";
+
+const logger = pino();
 
 // HACK Now only support PostgresQL, MySQL, Mariadb database query
 export async function clearTable(connection: Connection, table: string) {
@@ -16,6 +19,10 @@ export async function clearTable(connection: Connection, table: string) {
 }
 
 export function objectToBuffer(object: any) :Buffer {
+    if (object === undefined) {
+        logger.info('not data updated');
+        return;
+    }
     return Buffer.from(JSON.stringify(object,null,4));
 }
 

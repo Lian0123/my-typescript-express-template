@@ -14,7 +14,7 @@ dayjs.extend(timezone);
 
 export const getDateTime = (dateTime?:any, option:GetTimeZoneOption = {}) :dayjs.Dayjs => {
     const { timeZone = DEFAULT_TIME_ZONE } = option;
-    const getTime = dayjs(dateTime).tz(timeZone);
+    const getTime = dayjs(dateTime).tz(timeZone).utc();
 
     if (!getTime.isValid()) {
         throw new Error('dayjs parse time error');

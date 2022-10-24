@@ -20,7 +20,6 @@ import './env';
 const {
   SERVICE_NAME,
   SERVICE_VERSION,
-  SERVICE_HOST,
   SERVICE_PORT
 } = process.env;
 
@@ -42,7 +41,7 @@ const {
             version: SERVICE_VERSION
           },
           externalDocs: {
-            url: `${SERVICE_HOST}:${SERVICE_PORT}/api-docs`
+            url: `/api-docs`
           }
         }
       }

@@ -8,7 +8,7 @@ import { AccountRepository } from './repositories/account.repository';
 import { RoleRepository } from './repositories/role.repository';
 
 /* Controller Layer */
-import { createAccountEvent } from './account.event.controller';
+import { createAccountEvent, updateAccountEvent } from './account.event.controller';
 
 /* Type Define */
 import { CreateOneAccountDTO, UpdateAccountRoleByDTO, UpdateOneAccountDTO } from './dto/account.service.dto';
@@ -36,13 +36,16 @@ export class V1AccountService {
     return await this.accountRepository.findOneById(id);
   }
 
-  async createOneAccountByDTO (dto: CreateOneAccountDTO) :Promise<void> {
+  async createOneAccountByDTO (dto: CreateOneAccountDTO) :Promise<AccountBO> {
     const accountData = await this.accountRepository.createOneByDTO(dto);
     await createAccountEvent(this.rabbitMQConnection, accountData);
+    return accountData;
   }
 
-  async updateOneAccountById (dto: UpdateOneAccountDTO) :Promise<void> {
-    await this.accountRepository.updateOneByDTO(dto);
+  async updateOneAccountById (dto: UpdateOneAccountDTO) :Promise<AccountBO> {
+    const accountData = await this.accountRepository.updateOneByDTO(dto);
+    await updateAccountEvent(this.rabbitMQConnection, accountData);
+    return accountData;
   }
 
   async deleteOneAccountById (id: number) :Promise<void> {
@@ -78,10 +81,11 @@ export class V1AccountService {
       }
     }
 
-    await this.accountRepository.updateOneByDTO({ id, roles: matchRoleIds });
+    const accountData = await this.accountRepository.updateOneByDTO({ id, roles: matchRoleIds });
     await this.roleRepository.updateManyCountByIds(
       matchRoleIds.filter(role => !nowRoleIds.includes(role)),
       nowRoleIds.filter(role => !matchRoleIds.includes(role))
     );
+    await updateAccountEvent(this.rabbitMQConnection, accountData);
   }
 }

@@ -1,6 +1,6 @@
 /* Import Package */
 import { plainToClass, Transform, Type } from 'class-transformer';
-import { IsArray } from 'class-validator';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsNumberString, IsOptional, IsString } from 'class-validator';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 
 /* Type & Interface */
@@ -15,6 +15,7 @@ export class AccountParamDTO {
       description: 'Account id',
       example: 1
     })
+    @IsNumberString()
     id: number;
 
     static plainToClass (dto:any): AccountParamDTO {
@@ -32,12 +33,16 @@ export class UpdateAccountBodyDTO {
       description: 'Account Name',
       example: 'josh'
     })
+    @IsString()
+    @IsOptional()
     name?: string;
 
     @ApiModelProperty({
       description: 'Account setting email',
       example: 'example@mail.com'
     })
+    @IsEmail()
+    @IsOptional()
     email?: string;
 
     @ApiModelProperty({
@@ -45,24 +50,32 @@ export class UpdateAccountBodyDTO {
       enum: [GenderEnum.FEMALE, GenderEnum.MALE],
       example: GenderEnum.MALE
     })
+    @IsEnum(GenderEnum)
+    @IsOptional()
     gender?: GenderEnum;
 
     @ApiModelProperty({
       description: 'Account setting locate language',
       example: 'Japanese'
     })
+    @IsString()
+    @IsOptional()
     language?: string;
 
     @ApiModelProperty({
       description: 'Account setting area',
       example: 'Asia'
     })
+    @IsString()
+    @IsOptional()
     area?: string;
 
     @ApiModelProperty({
       description: 'Account setting country',
       example: 'Japan'
     })
+    @IsString()
+    @IsOptional()
     country?: string;
 
     @ApiModelProperty({
@@ -70,6 +83,8 @@ export class UpdateAccountBodyDTO {
       enum: Object.keys(AccountStatusEnum),
       example: AccountStatusEnum.ENABLE,
     })
+    @IsEnum(AccountStatusEnum)
+    @IsOptional()
     status?: AccountStatusEnum;
 
     static plainToClass (dto:any): UpdateAccountBodyDTO {
@@ -87,12 +102,15 @@ export class CreateAccountBodyDTO {
       description: 'account id',
       example: 'josh'
     })
+    @IsString()
+    @IsNotEmpty()
     name: string;
 
     @ApiModelProperty({
       description: 'Account setting email',
       example: 'example@mail.com'
     })
+    @IsEmail()
     email: string;
 
     @ApiModelProperty({
@@ -100,24 +118,28 @@ export class CreateAccountBodyDTO {
       enum: [GenderEnum.FEMALE, GenderEnum.MALE],
       example: GenderEnum.MALE
     })
+    @IsEnum(GenderEnum, {})
     gender: GenderEnum;
 
     @ApiModelProperty({
       description: 'Account setting locate language',
       example: 'Japanese'
     })
+    @IsString()
     language: string;
 
     @ApiModelProperty({
       description: 'Account setting area',
       example: 'Asia'
     })
+    @IsString()
     area: string;
 
     @ApiModelProperty({
       description: 'Account setting country',
       example: 'Japan'
     })
+    @IsString()
     country: string;
 
     @ApiModelProperty({
@@ -137,6 +159,7 @@ export class CreateAccountsBodyDTO {
       description: 'Account Id',
       model: 'CreateAccountBodyDTO'
     })
+    @IsArray()
     items: CreateAccountBodyDTO[];
 
     static plainToClass (dto:any): CreateAccountsBodyDTO {

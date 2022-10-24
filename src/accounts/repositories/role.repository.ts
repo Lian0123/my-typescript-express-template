@@ -33,8 +33,13 @@ export class RoleRepository extends BaseRepository<RoleEntity> {
     return await this.save({ ...dto });
   }
 
-  async updateOneByDTO (dto: UpdateOneRoleDTO) : Promise<void> {
-    await this.update({ id: dto.id }, { ...dto });
+  async updateOneByDTO (dto: UpdateOneRoleDTO) : Promise<RolePO> {
+    const rawData = await this.createQueryBuilder('roles')
+      .update({ ...dto })
+      .where({id: dto.id})
+      .returning("*")
+      .execute();
+    return rawData.raw[0];
   }
 
   async deleteOneById (id:number) : Promise<void> {
@@ -55,10 +60,6 @@ export class RoleRepository extends BaseRepository<RoleEntity> {
 
   async updateManyCountByIds ( addRoleIds: number[], subRoleIds: number[]) : Promise<void> {
     if(subRoleIds?.length){
-      console.log(this.createQueryBuilder('roles')
-      .update(RoleEntity)
-      .whereInIds(subRoleIds)
-      .set({ totalCount: () => '"totalCount" - 1' }).getSql());
       await this.createQueryBuilder('roles')
         .update(RoleEntity)
         .whereInIds(subRoleIds)
@@ -66,10 +67,6 @@ export class RoleRepository extends BaseRepository<RoleEntity> {
         .execute();
     }
     if(addRoleIds?.length){
-      console.log(this.createQueryBuilder('roles')
-      .update(RoleEntity)
-      .whereInIds(addRoleIds)
-      .set({ totalCount: () => '"totalCount" + 1' }).getSql());
       await this.createQueryBuilder('roles')
         .update(RoleEntity)
         .whereInIds(addRoleIds)

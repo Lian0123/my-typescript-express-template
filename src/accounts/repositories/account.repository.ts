@@ -26,8 +26,13 @@ export class AccountRepository extends BaseRepository<AccountEntity> {
     return await this.save({ ...dto });
   }
 
-  async updateOneByDTO (dto: UpdateOneAccountDTO) : Promise<void> {
-    await this.update({ id: dto.id }, { ...dto });
+  async updateOneByDTO (dto: UpdateOneAccountDTO) : Promise<AccountPO> {
+    const rawData = await this.createQueryBuilder('accounts')
+      .update({ ...dto })
+      .where({id: dto.id})
+      .returning("*")
+      .execute();
+    return rawData.raw[0];
   }
 
   async deleteOneById (id:number) : Promise<void> {

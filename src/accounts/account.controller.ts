@@ -103,9 +103,11 @@ export class V1AccountController implements interfaces.Controller {
     })
     async createAccountByDTO (
       request: Request
-    ): Promise<void> {
+    ): Promise<AccountAO> {
       const bodyDTO = plainToClass(CreateAccountBodyDTO, request.body);
-      await this.accountService.createOneAccountByDTO(bodyDTO);
+      return AccountAO.plainToClass(
+        await this.accountService.createOneAccountByDTO(bodyDTO)
+      );
     }
 
     @httpPut('/:id')
