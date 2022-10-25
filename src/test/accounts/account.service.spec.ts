@@ -7,6 +7,7 @@ import { V1AccountService } from '../../accounts/account.service';
 
 /* Repository Layer */
 import { AccountRepository } from '../../accounts/repositories/account.repository';
+import { RoleRepository } from '../../accounts/repositories/role.repository';
 
 /* Define Utils */
 import { clearTable } from '../../utils';
@@ -31,6 +32,7 @@ let accountService: V1AccountService;
 let typeORMConnection: TypeORMConnection;
 let rabbitMQConnection: AmqpConnection;
 let accountRepository: AccountRepository;
+let roleRepository:  RoleRepository;
 
 describe('test accountService', () => {
   beforeAll(async (done) => {
@@ -39,7 +41,7 @@ describe('test accountService', () => {
       `amqp://${RABBITMQ_USER_NAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_MAPPING_PORT}`
     );
     accountRepository = getConnection(POSTGRESQL_CONNECTION_NAME).getCustomRepository(AccountRepository);
-    accountService = new V1AccountService(accountRepository,rabbitMQConnection);
+    accountService = new V1AccountService(accountRepository,roleRepository,rabbitMQConnection);
     
     // need assign test environment, protect other environment data
     expect(NODE_ENV).toMatch(/^test$|^ci$/);

@@ -11,6 +11,7 @@ import { V1AccountService } from '../../accounts/account.service';
 
 /* Repository Layer */
 import { AccountRepository } from '../../accounts/repositories/account.repository';
+import { RoleRepository } from '../../accounts/repositories/role.repository';
 
 /* Define Utils */
 import { clearTable } from '../../utils';
@@ -30,10 +31,12 @@ const {
 } = process.env;
 
 jest.mock('../../accounts/account.event.controller');
+jest.mock('../../accounts/account.event.controller');
 
 let v1AccountController: V1AccountController;
 let accountService: V1AccountService;
 let accountRepository: AccountRepository;
+let roleRepository: RoleRepository;
 let typeORMConnection: TypeORMConnection;
 let rabbitMQConnection: AmqpConnection;
 
@@ -45,7 +48,7 @@ describe('test V1AccountController', () => {
       `amqp://${RABBITMQ_USER_NAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_MAPPING_PORT}`
     );
     accountRepository = getConnection(POSTGRESQL_CONNECTION_NAME).getCustomRepository(AccountRepository);
-    accountService = new V1AccountService(accountRepository,rabbitMQConnection);
+    accountService = new V1AccountService(accountRepository,roleRepository,rabbitMQConnection);
     v1AccountController = new V1AccountController(accountService);
 
     // need assign test environment, protect other environment data
