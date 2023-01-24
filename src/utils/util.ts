@@ -2,10 +2,14 @@
 import pino from 'pino';
 import { Connection } from "typeorm";
 
+/* Type Check */
+import { validate } from 'class-validator';
+import { ClassConstructor, plainToClass } from 'class-transformer';
+
 const logger = pino();
 
 // HACK Now only support PostgresQL, MySQL, Mariadb database query
-export async function clearTable(connection: Connection, table: string) {
+export const clearTable = async (connection: Connection, table: string) :Promise<void> => {
     const selectDatabase = connection.options.type;
     await connection.query(`TRUNCATE TABLE ${table}`);
 
@@ -16,16 +20,26 @@ export async function clearTable(connection: Connection, table: string) {
     }else{
         throw 'Not defined database type, please update /util.ts clearTable function';
     }
-}
+};
 
-export function objectToBuffer(object: any) :Buffer {
+export const validateClass = async <T, V>(cls: ClassConstructor<T>, plain: V) :Promise<T> => {
+    const plainDTO = plainToClass(cls, plain);
+    const validError = await validate(plainDTO as any);
+
+    if (validError?.length) {
+     throw validError[0];
+    }
+    return plainDTO;
+};
+
+export const objectToBuffer = (object: any) :Buffer => {
     if (object === undefined) {
         logger.info('not data updated');
         return;
     }
     return Buffer.from(JSON.stringify(object,null,4));
-}
+};
 
-export function bufferToObject(buffer: Buffer) :any {
+export const bufferToObject = (buffer: Buffer) :any => {
     return JSON.parse(buffer.toString());
-}
+};

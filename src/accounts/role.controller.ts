@@ -1,5 +1,4 @@
 /* Import Package */
-import { plainToClass } from 'class-transformer';
 import { Request } from 'express';
 import { inject } from 'inversify';
 import {
@@ -30,6 +29,7 @@ import {
   UpdateRoleBodyDTO,
   RoleParamDTO
 } from './dto/role.controller.dto';
+import { validateClass } from '../utils';
 
 /* Enum & Constant */
 import { BasicResponses, CreateResponses } from '../common/constants';
@@ -65,7 +65,7 @@ export class V1RoleController implements interfaces.Controller {
     async createRoleByDTO (
       request: Request
     ): Promise<void> {
-      const bodyDTO = plainToClass(CreateRoleBodyDTO, request.body);
+      const bodyDTO = await validateClass(CreateRoleBodyDTO, request.body);
       await this.roleService.createOneRoleByDTO(bodyDTO);
     }
 
@@ -92,8 +92,8 @@ export class V1RoleController implements interfaces.Controller {
     async updateRoleById (
         request: Request
     ): Promise<void> {
-        const paramDTO = plainToClass(RoleParamDTO, request.params);
-        const bodyDTO = plainToClass(UpdateRoleBodyDTO, request.body);
+        const paramDTO = await validateClass(RoleParamDTO, request.params);
+        const bodyDTO = await validateClass(UpdateRoleBodyDTO, request.body);
         await this.roleService.updateOneRoleById({
           ...paramDTO,
           ...bodyDTO
@@ -120,7 +120,7 @@ export class V1RoleController implements interfaces.Controller {
     async deleteRoleById (
       request: Request
     ): Promise<void> {
-      const paramDTO = plainToClass(RoleParamDTO, request.params);
+      const paramDTO = await validateClass(RoleParamDTO, request.params);
       await this.roleService.deleteOneRoleById(paramDTO.id);
     }
 
@@ -153,7 +153,7 @@ export class V1RoleController implements interfaces.Controller {
     async findRoleById (
       request: Request
     ): Promise<RoleAO> {
-      const paramDTO = plainToClass(RoleParamDTO, request.params);
+      const paramDTO = await validateClass(RoleParamDTO, request.params);
 
       return RoleAO.plainToClass(
         await this.roleService.findOneRoleById(
@@ -196,7 +196,7 @@ export class V1RoleController implements interfaces.Controller {
     async findRolesByDTO (
       request: Request
     ): Promise<RolesAO> {
-      const bodyDTO = plainToClass(FindRolesQueryDTO, request.query);
+      const bodyDTO = await validateClass(FindRolesQueryDTO, request.query);
       return RolesAO.plainToClass(
         await this.roleService.findManyRoleByLimitAndOffset(
           bodyDTO.limit,

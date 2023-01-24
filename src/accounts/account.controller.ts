@@ -18,6 +18,7 @@ import {
   ApiPath,
   SwaggerDefinitionConstant
 } from 'swagger-express-ts';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 /* Service Layer */
 import { V1AccountService } from './account.service';
@@ -31,13 +32,14 @@ import {
   AccountParamDTO,
   UpdateAccountRoleBodyDTO
 } from './dto/account.controller.dto';
+import { validateClass } from '../utils';
 
 /* Enum & Constant */
 import { BasicResponses, CreateResponses } from '../common/constants';
 
 /* Inject Reference */
 import 'reflect-metadata';
-import { Transactional } from 'typeorm-transactional-cls-hooked';
+
 
 @ApiPath({
   name: '/v1/accounts',
@@ -79,8 +81,7 @@ export class V1AccountController implements interfaces.Controller {
     async findAccountById (
       request: Request
     ): Promise<AccountAO> {
-      const paramDTO = plainToClass(AccountParamDTO, request.params);
-
+      const paramDTO = await validateClass(AccountParamDTO, request.params);
       return AccountAO.plainToClass(
         await this.accountService.findOneAccountById(
           paramDTO.id
@@ -104,7 +105,8 @@ export class V1AccountController implements interfaces.Controller {
     async createAccountByDTO (
       request: Request
     ): Promise<AccountAO> {
-      const bodyDTO = plainToClass(CreateAccountBodyDTO, request.body);
+      const bodyDTO = await validateClass(CreateAccountBodyDTO, request.body);
+
       return AccountAO.plainToClass(
         await this.accountService.createOneAccountByDTO(bodyDTO)
       );
@@ -133,8 +135,8 @@ export class V1AccountController implements interfaces.Controller {
     async updateAccountById (
       request: Request
     ): Promise<void> {
-      const paramDTO = plainToClass(AccountParamDTO, request.params);
-      const bodyDTO = plainToClass(UpdateAccountBodyDTO, request.body);
+      const paramDTO = await validateClass(AccountParamDTO, request.params);
+      const bodyDTO = await validateClass(UpdateAccountBodyDTO, request.body);
       await this.accountService.updateOneAccountById({
         ...paramDTO,
         ...bodyDTO
@@ -161,7 +163,7 @@ export class V1AccountController implements interfaces.Controller {
     async deleteAccountById (
       request: Request
     ): Promise<void> {
-      const paramDTO = plainToClass(AccountParamDTO, request.params);
+      const paramDTO = await validateClass(AccountParamDTO, request.params);
       await this.accountService.deleteOneAccountById(paramDTO.id);
     }
 

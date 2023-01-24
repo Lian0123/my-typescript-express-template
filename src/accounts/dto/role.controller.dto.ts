@@ -1,6 +1,6 @@
 /* Import Package */
-import { plainToClass, Transform, Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsEnum, IsISO8601, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsBoolean, IsEnum, IsISO8601, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { getDateTime } from '../../utils';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 
@@ -11,19 +11,13 @@ import { PaginationDTO } from '../../common/dto/pagination.dto';
 import { RoleNameEnum, RoleStatusEnum } from '../../common/enums';
 
 export class RoleParamDTO {
-    @Transform(({ value }) => { return Number(value); })
+    @Transform(({ value }) => { return Number(value) || value; })
     @ApiModelProperty({
       description: 'Role id',
       example: 1
     })
-    @IsNumberString()
+    @IsNumber()
     id: number;
-
-    static plainToClass (dto:any): RoleParamDTO {
-      return plainToClass(RoleParamDTO, dto, {
-        excludeExtraneousValues: true
-      });
-    }
 }
 
 @ApiModel({
@@ -80,12 +74,6 @@ export class UpdateRoleBodyDTO {
     @IsNumber()
     @IsOptional()
     applyCount?: number;
-
-    static plainToClass (dto:any): UpdateRoleBodyDTO {
-      return plainToClass(UpdateRoleBodyDTO, dto, {
-        excludeExtraneousValues: true
-      });
-    }
 }
 
 @ApiModel({
@@ -149,10 +137,4 @@ export class CreateRolesBodyDTO {
     })
     @IsArray()
     items: CreateRoleBodyDTO[];
-
-    static plainToClass (dto:any): CreateRolesBodyDTO {
-      return plainToClass(CreateRolesBodyDTO, dto, {
-        excludeExtraneousValues: true
-      });
-    }
 }
