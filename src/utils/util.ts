@@ -9,7 +9,7 @@ import { ClassConstructor, plainToClass } from 'class-transformer';
 const logger = pino();
 
 // HACK Now only support PostgresQL, MySQL, Mariadb database query
-export const clearTable = async (connection: Connection, table: string) :Promise<void>=> {
+export const clearTable = async (connection: Connection, table: string) :Promise<void> => {
     const selectDatabase = connection.options.type;
     await connection.query(`TRUNCATE TABLE ${table}`);
 
@@ -22,7 +22,7 @@ export const clearTable = async (connection: Connection, table: string) :Promise
     }
 };
 
-export const validateClass = async <T, V>(cls: ClassConstructor<T>, plain: V) :Promise<T>  => {
+export const validateClass = async <T, V>(cls: ClassConstructor<T>, plain: V) :Promise<T> => {
     const plainDTO = plainToClass(cls, plain);
     const validError = await validate(plainDTO as any);
 
