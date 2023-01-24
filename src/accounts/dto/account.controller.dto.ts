@@ -1,6 +1,6 @@
 /* Import Package */
-import { plainToClass, Transform, Type } from 'class-transformer';
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsNumberString, IsOptional, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 
 /* Type & Interface */
@@ -10,19 +10,13 @@ import { PaginationDTO } from '../../common/dto/pagination.dto';
 import { AccountStatusEnum, GenderEnum } from '../../common/enums';
 
 export class AccountParamDTO {
-    @Transform(({ value }) => { return Number(value); })
+    @Transform(({ value }) => { return Number(value)||value; })
     @ApiModelProperty({
       description: 'Account id',
       example: 1
     })
-    @IsNumberString()
+    @IsNumber()
     id: number;
-
-    static plainToClass (dto:any): AccountParamDTO {
-      return plainToClass(AccountParamDTO, dto, {
-        excludeExtraneousValues: true
-      });
-    }
 }
 
 @ApiModel({
@@ -86,12 +80,6 @@ export class UpdateAccountBodyDTO {
     @IsEnum(AccountStatusEnum)
     @IsOptional()
     status?: AccountStatusEnum;
-
-    static plainToClass (dto:any): UpdateAccountBodyDTO {
-      return plainToClass(UpdateAccountBodyDTO, dto, {
-        excludeExtraneousValues: true
-      });
-    }
 }
 
 @ApiModel({
@@ -148,7 +136,6 @@ export class CreateAccountBodyDTO {
       example: AccountStatusEnum.ENABLE,
     })
     status: AccountStatusEnum;
-
 }
 
 export class FindAccountsQueryDTO extends PaginationDTO {}
@@ -161,15 +148,7 @@ export class CreateAccountsBodyDTO {
     })
     @IsArray()
     items: CreateAccountBodyDTO[];
-
-    static plainToClass (dto:any): CreateAccountsBodyDTO {
-      return plainToClass(CreateAccountsBodyDTO, dto, {
-        excludeExtraneousValues: true
-      });
-    }
 }
-
-
 
 export class UpdateAccountRoleBodyDTO {
   @Transform(({ value }) => value ? Array.from(new Set(value)) : undefined )

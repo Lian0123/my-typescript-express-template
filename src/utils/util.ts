@@ -2,6 +2,10 @@
 import pino from 'pino';
 import { Connection } from "typeorm";
 
+/* Type Check */
+import { validate } from 'class-validator';
+import { ClassConstructor, plainToClass } from 'class-transformer';
+
 const logger = pino();
 
 // HACK Now only support PostgresQL, MySQL, Mariadb database query
@@ -16,6 +20,16 @@ export async function clearTable(connection: Connection, table: string) {
     }else{
         throw 'Not defined database type, please update /util.ts clearTable function';
     }
+}
+
+export async function validateClass<T, V>(cls: ClassConstructor<T>, plain: V) :Promise<T> {
+    const plainDTO = plainToClass(cls, plain);
+    const validError = await validate(plainDTO as any);
+
+    if (validError?.length) {
+     throw validError[0];
+    }
+    return plainDTO;
 }
 
 export function objectToBuffer(object: any) :Buffer {
