@@ -36,6 +36,9 @@ export class RolePO implements IRoleBase {
     @Expose()
     isDeleted: boolean;
 
+    @Expose()
+    version: number;
+
     static plainToClass (entity:any): RolePO {
       return plainToClass(RolePO, entity, {
         excludeExtraneousValues: true

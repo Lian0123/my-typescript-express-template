@@ -6,6 +6,7 @@ import { Connection } from 'amqplib';
 import { createRabbitMQEvent, listenRabbitMQEvent } from '../utils/rabbit-mq';
 
 /* Type Define */
+import { AccountRabbitMQAO } from './ao/account.ao';
 import { AccountPO } from './po/account.po';
 
 /* Enum & Constant */
@@ -17,11 +18,11 @@ const logger = pino();
  * Send Event
  */
 export const createAccountEvent = async (connection: Connection, accountData: AccountPO) => {
-    await createRabbitMQEvent(connection, CREATED_ACCOUNT_EVENT, accountData);
+    await createRabbitMQEvent(connection, CREATED_ACCOUNT_EVENT, AccountRabbitMQAO.plainToClass(accountData));
 };
 
 export const updateAccountEvent = async (connection: Connection, accountData: AccountPO) => {
-    await createRabbitMQEvent(connection, UPDATED_ACCOUNT_EVENT, accountData);
+    await createRabbitMQEvent(connection, UPDATED_ACCOUNT_EVENT, AccountRabbitMQAO.plainToClass(accountData));
 };
 
 /**

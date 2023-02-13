@@ -100,3 +100,22 @@ export class RolesAO {
       });
     }
 }
+
+
+@ApiModel({
+  description: 'Role RabbitMQ AO'
+})
+export class RoleRabbitMQAO extends RoleAO {
+  @Expose()
+  @ApiModelProperty({
+    description: 'Data version number',
+    example: 1,
+  })
+  version: number;
+
+  static plainToClass (bo:any): RoleRabbitMQAO {
+    return plainToClass(RoleRabbitMQAO, bo, {
+      excludeExtraneousValues: true
+    });
+  }
+}

@@ -6,6 +6,7 @@ import { Connection } from 'amqplib';
 import { createRabbitMQEvent, listenRabbitMQEvent } from '../utils/rabbit-mq';
 
 /* Type Define */
+import { RoleRabbitMQAO } from './ao/role.ao';
 import { RolePO } from './po/role.po';
 
 /* Enum & Constant */
@@ -20,11 +21,11 @@ const logger = pino();
  * Send Event
  */
 export const createRoleEvent = async (connection: Connection, roleData: RolePO) => {
-    await createRabbitMQEvent(connection, CREATED_ROLE_EVENT, roleData);
+    await createRabbitMQEvent(connection, CREATED_ROLE_EVENT, RoleRabbitMQAO.plainToClass(roleData));
 };
 
 export const updateRoleEvent = async (connection: Connection, roleData: RolePO) => {
-    await createRabbitMQEvent(connection, UPDATED_ROLE_EVENT, roleData);
+    await createRabbitMQEvent(connection, UPDATED_ROLE_EVENT, RoleRabbitMQAO.plainToClass(roleData));
 };
 
 /**
