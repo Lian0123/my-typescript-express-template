@@ -99,3 +99,21 @@ export class AccountsAO {
       });
     }
 }
+
+@ApiModel({
+  description: 'Account RabbitMQ AO'
+})
+export class AccountRabbitMQAO extends AccountAO {
+  @Expose()
+  @ApiModelProperty({
+    description: 'Data version number',
+    example: 1,
+  })
+  version: number;
+
+  static plainToClass (bo:any): AccountRabbitMQAO {
+    return plainToClass(AccountRabbitMQAO, bo, {
+      excludeExtraneousValues: true
+    });
+  }
+}

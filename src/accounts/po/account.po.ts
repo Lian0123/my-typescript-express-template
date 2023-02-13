@@ -39,6 +39,9 @@ export class AccountPO implements IAccountBase {
     @Expose()
     status: AccountStatusEnum;
 
+    @Expose()
+    version: number;
+
     static plainToClass (entity:any): AccountPO {
       return plainToClass(AccountPO, entity, {
         excludeExtraneousValues: true
