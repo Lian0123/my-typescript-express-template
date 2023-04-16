@@ -15,6 +15,7 @@
     "start:dev": "nodemon ./src/main.ts",
     "start:prod": "node ./dist/main.js",
     "test:e2e": "jest \".e2e.spec.ts$\" --forceExit",
+    "test:k6": "sh ./script/shell/run-k6-test.sh ",
     "test": "jest \"(?<!.e2e).spec.ts$\" --detectOpenHandles --coverage",
     "docker-compose:local": "docker-compose -f docker-compose.local.yaml --env-file ./envs/.env",
     "docker-compose:test": "docker-compose -f docker-compose.test.yaml --env-file ./envs/.env",
@@ -39,6 +40,7 @@
     "src/public/"
   ],
   "dependencies": {
+    "@types/k6": "^0.43.3",
     "amqplib": "0.8.0",
     "body-parser": "1.20.1",
     "bull": "4.2.0",
