@@ -14,7 +14,7 @@ export const options = {
         },
         getAccount: {
             executor: 'constant-vus',
-            exec: 'getAccounts',
+            exec: 'getAccount',
             vus: 1500,
             duration: '30s',
             env: { SERVICE_HOST, SERVICE_PORT },
@@ -31,9 +31,9 @@ export const getAccounts = () => {
 };
 
 export const getAccount = () => {
-    const res = http.get(`http://${SERVICE_HOST}:${SERVICE_PORT}/v1/account?id=1`); 
+    const res = http.get(`http://${SERVICE_HOST}:${SERVICE_PORT}/v1/account?id=999999`); 
     console.log(res);
     console.log('getAccount Response time was ' + String(res.timings.duration) + ' ms');
-    k6.check(res, { 'getAccount status was 200': (r) => r.status == 200 });
+    k6.check(res, { 'getAccount status was 404': (r) => r.status == 404 });
     k6.sleep(1);
 };
