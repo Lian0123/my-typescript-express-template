@@ -1,7 +1,11 @@
 import http from 'k6/http';
 import k6 from 'k6';
 
-const { SERVICE_HOST, SERVICE_PORT } = __ENV;
+const { SERVICE_HOST, SERVICE_PORT, NODE_ENV } = __ENV;
+
+if (!/^test$|^ci$/.test(NODE_ENV)) {
+    throw "K6 test must in TEST or CI .env"
+}
 
 export const options = {
   scenarios: {

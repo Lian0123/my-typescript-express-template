@@ -9,9 +9,11 @@ if [ ! -f ../envs/.env ] ; then
           --out json=/local/k6/report_$date.json \
           -e SERVICE_HOST=$SERVICE_HOST \
           -e SERVICE_PORT=$SERVICE_PORT
+          -e NODE_ENV=${NODE_ENV}
   
   unset SERVICE_HOST
-  unset SERVICE_POSRT
+  unset SERVICE_PORT
+  unset NODE_ENV
 
 else
   echo -e "\033[1;31m"
