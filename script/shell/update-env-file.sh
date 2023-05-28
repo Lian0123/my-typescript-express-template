@@ -27,6 +27,7 @@ function showHelp(){
     echo -e "env-name: local|ci|dev|stage|test|prod"
     echo -e "  local: \".env.local\" local development"
     echo -e "  ci:    \".env.ci\"    github CI or gitlab CI"
+    echo -e "  k6:    \".env.k6\"    k6 test only"
     echo -e "  dev:   \".env.dev\"   development server"
     echo -e "  stage: \".env.stage\" stage server"
     echo -e "  test:  \".env.test\"  test server"
@@ -54,7 +55,7 @@ function changeEnvFile(){
         echo -e "\033[0m"
         showHelp
         exit
-    elif ! [ "$1" == "local" ] && ! [ "$1" == "ci" ] && ! [ "$1" == "dev" ] && ! [ "$1" == "test" ] && ! [ "$1" == "prod" ]; then 
+    elif ! [ "$1" == "local" ] && ! [ "$1" == "ci" ] && ! [ "$1" == "k6" ] && ! [ "$1" == "dev" ] && ! [ "$1" == "test" ] && ! [ "$1" == "prod" ]; then 
         echo -e "\033[1;31m"
         echo -e "Error: env-name only have local, ci, dev, test, prod\n"
         echo -e "\033[0m"
