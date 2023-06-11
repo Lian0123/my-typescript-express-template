@@ -5,12 +5,14 @@ import { AsyncContainerModule, decorate, injectable } from 'inversify';
 import { Controller, TYPE } from 'inversify-express-utils';
 import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection, Repository } from 'typeorm';
 import { initializeTransactionalContext, BaseRepository } from 'typeorm-transactional-cls-hooked';
+import { interfaces } from "inversify-socket-utils";
 
 /* Controller Layer */
 import { V1AccountController } from './accounts/account.controller';
 import { V1RoleController } from './accounts/role.controller';
 import { listenAccountCreatedEvent, listenAccountUpdatedEvent } from './accounts/account.event.controller';
 import { listenRoleCreatedEvent, listenRoleUpdatedEvent } from './accounts/role.event.controller';
+import { ChattingController } from './chatting/chatting.socket.controller';
 
 /* Service Layer */
 import { V1AccountService } from './accounts/account.service';
@@ -67,6 +69,11 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
   listenAccountUpdatedEvent(rabbitMQConnection);
   listenRoleCreatedEvent(rabbitMQConnection);
   listenRoleUpdatedEvent(rabbitMQConnection);
+
+  /**
+   * Socket.io
+   */
+  bind<interfaces.Controller>(TYPE.Controller).to(ChattingController);
 
   /**
    * Controller Layer
