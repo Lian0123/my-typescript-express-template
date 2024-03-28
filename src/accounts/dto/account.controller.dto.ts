@@ -156,6 +156,8 @@ export class UpdateAccountRoleBodyDTO {
   @ApiModelProperty({
     description: 'Account roles',
     example: [1,2,3],
+    model: 'Number',
+    type: 'Array'
   })
   roles: number[]; 
 }
