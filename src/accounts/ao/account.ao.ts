@@ -65,7 +65,9 @@ export class AccountAO {
   @Expose()
     @ApiModelProperty({
       description: 'Account roles',
-      example: [1,2,3]
+      example: [1,2,3],
+      model: 'Number',
+      type: 'Array'
     })
     roles: number[];
 
