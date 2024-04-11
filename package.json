@@ -73,7 +73,7 @@
     "pino-http": "8.2.0",
     "rate-limit-redis": "2.1.0",
     "reflect-metadata": "0.1.13",
-    "semantic-release": "21.0.1",
+    "semantic-release": "23.0.8",
     "swagger-express-ts": "1.1.0",
     "swagger-ui-express": "4.3.0",
     "ts-jest": "27.1.2",
