@@ -37,6 +37,27 @@ services:
       - "${RABBITMQ_MONITOR_MAPPING_PORT}:${RABBITMQ_MONITOR_PORT}"
       - "${RABBITMQ_MAPPING_PORT}:${RABBITMQ_PORT}"
 
+  mongodb:
+    image: mongo
+    env_file:
+      - envs/.env
+    restart: always
+    command: --auth --config /etc/mongo/mongod.conf
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_UERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
+      MONGO_INITDB_DATABASE:  "${MONGO_DATABAE}"
+      TZ: "${MONGO_TIMEZONE}"
+    volumes: 
+      - ./database/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./database/configdb:/data/configdb
+      - ./database/data:/data/db
+      - ./mongod.conf:/etc/mongo/mongod.conf
+    networks:
+      - express-test-template-share-network
+    ports:
+      - "${MONGO_MAPPING_PORT}:${MONGO_PORT}"
+
   plantuml-server:
     image: plantuml/plantuml-server
     env_file:

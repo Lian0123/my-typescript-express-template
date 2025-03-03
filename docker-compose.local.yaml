@@ -25,6 +25,7 @@ services:
       - '/path/to/redis-persistence:/bitnami'
 
   rabbitmq:
+    restart: always
     image: 'bitnami/rabbitmq:latest'
     networks:
       - express-test-template-share-network
@@ -33,9 +34,40 @@ services:
     environment: 
       - "RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}"
       - "RABBITMQ_DEFAULT_USER=${RABBITMQ_USER_NAME}"
+      - "RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS=true"
+      - "RABBITMQ_DEFAULT_VHOST=/"
     ports:
       - "${RABBITMQ_MONITOR_MAPPING_PORT}:${RABBITMQ_MONITOR_PORT}"
       - "${RABBITMQ_MAPPING_PORT}:${RABBITMQ_PORT}"
+
+  mongo:
+    image: mongo
+    env_file:
+      - envs/.env
+    restart: always
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME=${MONGO_UERNAME}"
+      - "MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}"
+      - "MONGO_INITDB_DATABASE=${MONGO_DATABAE}"
+    ports:
+      - "${MONGO_MAPPING_PORT}:${MONGO_PORT}"
+    networks:
+      - express-test-template-share-network
+
+  mongo-express:
+    image: mongo-express
+    env_file:
+      - envs/.env
+    restart: always
+    ports:
+      - "127.0.0.1:8081:8081"
+    environment:
+      - "ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_UERNAME}"
+      - "ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_PASSWORD}"
+      - "ME_CONFIG_MONGODB_URL=mongodb://${MONGO_UERNAME}:${MONGO_PASSWORD}@mongo:${MONGO_PORT}/"
+      - "ME_CONFIG_BASICAUTH=false"
+    networks:
+      - express-test-template-share-network
 
   plantuml-server:
     image: plantuml/plantuml-server
