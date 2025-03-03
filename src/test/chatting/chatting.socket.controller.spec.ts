@@ -10,7 +10,6 @@ import pino from 'pino';
 // /* Controller Layer */
 import { ChattingController } from '../../chatting/chatting.socket.controller';
 
-
 import '../../env';
 import { Server } from "socket.io";
 const { SERVICE_PORT } = process.env;
