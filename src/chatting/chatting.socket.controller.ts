@@ -16,6 +16,8 @@ const logger = pino();
 @injectable()
 @controller("/v1/chatting")
 export class ChattingController {
+  public static TARGET_NAME = 'ChattingController';
+
     @onConnect("connection")
     connection() {
       logger.info("chatting client connected");
@@ -25,10 +27,16 @@ export class ChattingController {
     disconnect() {
       logger.info("chatting client disconnected");
     }
-  
+
     @onMessage("message")
     message(@payload() payloadData: any, @connectedSocket() socket: any) {
       logger.info(`payload: ${JSON.stringify(payloadData)}`);
       socket.emit("message", "Hello!");
+    }
+
+    @onMessage("read")
+    readMessage(@payload() payloadData: any, @connectedSocket() socket: any) {
+      logger.info(`payload: ${JSON.stringify(payloadData)}`);
+      socket.emit("read", { status: 200 });
     }
 }

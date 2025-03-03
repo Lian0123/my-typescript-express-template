@@ -2,10 +2,11 @@
 import pino from 'pino';
 import { connect as amqpCreateConnection, Connection as AmqpConnection } from 'amqplib';
 import { AsyncContainerModule, decorate, injectable } from 'inversify';
-import { Controller, TYPE } from 'inversify-express-utils';
+import { Controller, TYPE as API_TYPE } from 'inversify-express-utils';
+import { MongoClient } from 'mongodb';
 import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection, Repository } from 'typeorm';
 import { initializeTransactionalContext, BaseRepository } from 'typeorm-transactional-cls-hooked';
-import { interfaces } from "inversify-socket-utils";
+import { interfaces, TYPE as SOCKET_TYPE } from "inversify-socket-utils";
 
 /* Controller Layer */
 import { V1AccountController } from './accounts/account.controller';
@@ -42,13 +43,20 @@ import {
 /* Config & Environment Variables */
 import { typeOrmConfig } from './typeorm-config';
 const {
+   MONGO_UERNAME,
+   MONGO_PASSWORD,
+   MONGO_MAPPING_PORT,
    RABBITMQ_USER_NAME,
    RABBITMQ_PASSWORD,
    RABBITMQ_MAPPING_PORT,
-   RABBITMQ_HEART_BEAT
+   RABBITMQ_HEART_BEAT,
 } = process.env;
 
 export const containerBinding = new AsyncContainerModule(async (bind) => {
+   const mongoDBConnection = new MongoClient(
+    `mongodb://${MONGO_UERNAME}:${MONGO_PASSWORD}@${MONGO_MAPPING_PORT}`,
+    { useUnifiedTopology: true },
+   ).connect();
    const typeORMConnection = await typeORMCreateConnection(typeOrmConfig);
    const rabbitMQConnection = await amqpCreateConnection(
       `amqp://${RABBITMQ_USER_NAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_MAPPING_PORT}?heartbeat=${RABBITMQ_HEART_BEAT}`
@@ -59,6 +67,7 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
    /**
     * Connection
     */
+   bind<TypeORMConnection>('mongoDBConnection').toConstantValue(mongoDBConnection);
    bind<TypeORMConnection>('typeORMConnection').toConstantValue(typeORMConnection);
    bind<AmqpConnection>('rabbitMQConnection').toConstantValue(rabbitMQConnection);
 
@@ -73,20 +82,23 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
   /**
    * Socket.io
    */
-  bind<interfaces.Controller>(TYPE.Controller).to(ChattingController);
+  bind<interfaces.Controller>(SOCKET_TYPE.Controller)
+    .to(ChattingController)
+    .inSingletonScope()
+    .whenTargetNamed(ChattingController.TARGET_NAME);
 
   /**
    * Controller Layer
    */
-  bind<Controller>(TYPE.Controller)
+  bind<Controller>(API_TYPE.Controller)
     .to(V1AccountController)
     .inSingletonScope()
     .whenTargetNamed(V1AccountController.TARGET_NAME);
-  bind<Controller>(TYPE.Controller)
+  bind<Controller>(API_TYPE.Controller)
     .to(V1RoleController)
     .inSingletonScope()
     .whenTargetNamed(V1RoleController.TARGET_NAME);
-    
+
   /**
     * Service Layer
     */

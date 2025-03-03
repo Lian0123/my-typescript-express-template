@@ -7,6 +7,7 @@ import httpPino from 'pino-http';
 import { randomUUID } from 'crypto';
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
+import { InversifySocketServer } from 'inversify-socket-utils';
 import { Server } from "socket.io";
 
 /* Enum & Constant */
