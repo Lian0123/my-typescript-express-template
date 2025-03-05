@@ -7,6 +7,8 @@ import httpPino from 'pino-http';
 import { randomUUID } from 'crypto';
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
+import { InversifySocketServer } from 'inversify-socket-utils';
+import { Server } from "socket.io";
 
 /* Enum & Constant */
 import { ErrorHandler } from './common/constants';
@@ -57,9 +59,17 @@ const {
 
   const app = server.build();
 
-  app.listen(SERVICE_PORT, () => {
+  const httpServer = app.listen(SERVICE_PORT, () => {
     logger.info(`Server is running on port ${SERVICE_PORT}`);
   });
+
+  const serverIo = new Server(httpServer);
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const socketServer = new InversifySocketServer(container, serverIo);
+  socketServer.build();
+
 
   app.use(ErrorHandler);
 })();
