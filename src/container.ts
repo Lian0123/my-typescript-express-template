@@ -53,7 +53,7 @@ const {
 } = process.env;
 
 export const containerBinding = new AsyncContainerModule(async (bind) => {
-   const mongoDBConnection = new MongoClient(
+  const mongoDBConnection = new MongoClient(
     `mongodb://${MONGO_UERNAME}:${MONGO_PASSWORD}@${MONGO_MAPPING_PORT}`,
     { useUnifiedTopology: true },
    ).connect();
@@ -67,7 +67,7 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
    /**
     * Connection
     */
-   bind<TypeORMConnection>('mongoDBConnection').toConstantValue(mongoDBConnection);
+    bind<Promise<MongoClient>>('mongoDBConnection').toConstantValue(mongoDBConnection);
    bind<TypeORMConnection>('typeORMConnection').toConstantValue(typeORMConnection);
    bind<AmqpConnection>('rabbitMQConnection').toConstantValue(rabbitMQConnection);
 
@@ -114,8 +114,11 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
    */
   decorate(injectable(), Repository);
   decorate(injectable(), BaseRepository);
-  bind<AccountRepository>(AccountRepository.name).to(AccountRepository);
-  bind<RoleRepository>(RoleRepository.name).to(RoleRepository);
+  // Bind the TypeORM custom repositories from the live connection so services stay testable.
+  bind<AccountRepository>(AccountRepository.name)
+    .toConstantValue(typeORMConnection.getCustomRepository(AccountRepository));
+  bind<RoleRepository>(RoleRepository.name)
+    .toConstantValue(typeORMConnection.getCustomRepository(RoleRepository));
   
   /**
    * Data Transfer Object

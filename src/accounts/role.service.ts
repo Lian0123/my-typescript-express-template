@@ -2,7 +2,6 @@
 import { inject, injectable } from 'inversify';
 
 /* Inject Member */
-import { getConnection } from 'typeorm';
 import { Connection as AmqpConnection } from 'amqplib';
 import { RoleRepository } from './repositories/role.repository';
 
@@ -16,17 +15,12 @@ import { RoleBO, RolesBO } from './bo/role.bo';
 /* Inject Reference */
 import 'reflect-metadata';
 
-/* Environment Variables */
-const { POSTGRESQL_CONNECTION_NAME } = process.env;
-
 @injectable()
 export class V1RoleService {
   constructor (
     @inject(RoleRepository.name) private roleRepository: RoleRepository,
     @inject('rabbitMQConnection') private rabbitMQConnection: AmqpConnection
-  ) {
-    this.roleRepository = getConnection(POSTGRESQL_CONNECTION_NAME).getCustomRepository(RoleRepository);
-  }
+  ) {}
 
   async findOneRoleById (id:number) :Promise<RoleBO> {
     return await this.roleRepository.findOneById(id);

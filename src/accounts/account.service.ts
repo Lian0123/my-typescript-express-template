@@ -2,7 +2,6 @@
 import { inject, injectable } from 'inversify';
 
 /* Inject Member */
-import { getConnection } from 'typeorm';
 import { Connection as AmqpConnection } from 'amqplib';
 import { AccountRepository } from './repositories/account.repository';
 import { RoleRepository } from './repositories/role.repository';
@@ -18,19 +17,14 @@ import { ErrorMessageEnum, serviceError } from '../common/constants';
 /* Inject Reference */
 import 'reflect-metadata';
 
-/* Environment Variables */
-const { POSTGRESQL_CONNECTION_NAME } = process.env;
-
 @injectable()
 export class V1AccountService {
   constructor (
+    // The container supplies connected custom repositories in production and simple doubles in tests.
     @inject(AccountRepository.name) private accountRepository: AccountRepository,
     @inject(RoleRepository.name) private roleRepository: RoleRepository,
     @inject('rabbitMQConnection') private rabbitMQConnection: AmqpConnection
-  ) {
-    this.accountRepository = getConnection(POSTGRESQL_CONNECTION_NAME).getCustomRepository(AccountRepository);
-    this.roleRepository = getConnection(POSTGRESQL_CONNECTION_NAME).getCustomRepository(RoleRepository);
-  }
+  ) {}
 
   async findOneAccountById (id:number) :Promise<AccountBO> {
     return await this.accountRepository.findOneById(id);
@@ -65,26 +59,26 @@ export class V1AccountService {
     
     const nowRoles = await this.roleRepository.findManyByIds(account.roles);
     const matchRoles = await this.roleRepository.findManyByIds(roles);
-    const nowRoleIds = nowRoles.map(role => role.id);
-    const matchRoleIds = matchRoles.map(role => role.id);
+    const nowRoleIds = nowRoles.map((role) => role.id);
+    const matchRoleIds = matchRoles.map((role) => role.id);
 
     // Test roles is exist
     if(roles.length !== matchRoleIds.length) {
-      const notExistRoles :number[] = roles.filter(role => !matchRoleIds.includes(role) );
+      const notExistRoles :number[] = roles.filter((role) => !matchRoleIds.includes(role));
       throw serviceError(ErrorMessageEnum.TEMPLATE_ROLE_NO_EXIST, notExistRoles);
     }
 
     // Test has multi isUnique role
     for (const role of matchRoles) {
-      if(role.isUnique && matchRoles.length > 1) {
+      if (role.isUnique && matchRoles.length > 1) {
         throw serviceError(ErrorMessageEnum.TEMPLATE_ACCOUNT_ROLE_IS_UNIQUE, role.id);
       }
     }
 
     const accountData = await this.accountRepository.updateOneByDTO({ id, roles: matchRoleIds });
     await this.roleRepository.updateManyCountByIds(
-      matchRoleIds.filter(role => !nowRoleIds.includes(role)),
-      nowRoleIds.filter(role => !matchRoleIds.includes(role))
+      matchRoleIds.filter((role) => !nowRoleIds.includes(role)),
+      nowRoleIds.filter((role) => !matchRoleIds.includes(role))
     );
     await updateAccountEvent(this.rabbitMQConnection, accountData);
   }
