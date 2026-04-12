@@ -41,7 +41,7 @@
   ],
   "dependencies": {
     "amqplib": "0.8.0",
-    "body-parser": "1.20.3",
+    "body-parser": "^1.20.4",
     "bull": "4.16.5",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.2",
@@ -49,7 +49,7 @@
     "cookie-parser": "1.4.7",
     "dayjs": "1.11.20",
     "dotenv": "10.0.0",
-    "express": "4.21.2",
+    "express": "^4.22.1",
     "express-async-errors": "3.1.1",
     "express-jwt": "8.5.1",
     "express-rate-limit": "6.11.2",
@@ -65,7 +65,7 @@
     "jest": "27.5.1",
     "jest-express": "1.12.0",
     "jet-logger": "1.0.6",
-    "jimp": "1.6.0",
+    "jimp": "^1.6.1",
     "jsonfile": "6.1.0",
     "mathjs": "10.0.1",
     "module-alias": "2.2.2",
@@ -127,7 +127,7 @@
     "tsconfig-paths": "4.2.0",
     "typeorm-uml": "1.6.4",
     "typescript": "4.9.5",
-    "webpack": "5.101.3",
+    "webpack": "^5.106.1",
     "webpack-cli": "4.9.1"
   }
 }
