@@ -1,7 +1,7 @@
 /* Import Package */
-import * as dayjs from 'dayjs';
-import * as utc from 'dayjs/plugin/utc';
-import * as timezone from 'dayjs/plugin/timezone';
+import dayjs, { Dayjs } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 
 /* Environment Variables */
 const { DEFAULT_TIME_ZONE } = process.env;
@@ -12,7 +12,8 @@ class GetTimeZoneOption {
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const getDateTime = (dateTime?:any, option:GetTimeZoneOption = {}) :dayjs.Dayjs => {
+export const getDateTime = (dateTime?:any, option:GetTimeZoneOption = {}) :Dayjs => {
+    // Normalize all parsing through the configured time zone before converting to UTC.
     const { timeZone = DEFAULT_TIME_ZONE } = option;
     const getTime = dayjs(dateTime).tz(timeZone).utc();
 
@@ -28,13 +29,13 @@ class GetFormatOption extends GetTimeZoneOption {
 }
 
 export const getYYYYMMDD = (dateTime?:any,option?:GetFormatOption) :string => {
-    const  { joinBy = '' } = option;
+    const { joinBy = '' } = option || {};
     const formats = ['YYYY','MM','DD'];
     return getDateTime(dateTime,option).format(formats.join(joinBy));
 };
 
 export const getHHmmss = (dateTime?:any,option?:GetFormatOption) :string => {
-    const  { joinBy = '' } = option;
+    const { joinBy = '' } = option || {};
     const formats = ['HH','mm','ss'];
     return getDateTime(dateTime,option).format(formats.join(joinBy));
 };

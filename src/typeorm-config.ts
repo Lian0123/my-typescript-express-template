@@ -23,13 +23,16 @@ export const typeOrmConfig: ConnectionOptions = {
   synchronize: true,
   logging: false,
   entities: [
-    'src/accounts/entities/**/*.ts'
+    'src/**/*.entity.ts',
+    'dist/**/*.entity.js'
   ],
   migrations: [
-    'src/migrations/**/*.ts'
+    'src/migrations/**/*.ts',
+    'dist/migrations/**/*.js'
   ],
   subscribers: [
-    'src/subscribers/**/*.ts'
+    'src/subscribers/**/*.ts',
+    'dist/subscribers/**/*.js'
   ],
 };
 

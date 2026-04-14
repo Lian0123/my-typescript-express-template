@@ -14,12 +14,16 @@ export enum ErrorMessageEnum {
     TEMPLATE_SERVER_ERROR              = 'TEMPLATE_SERVER_ERROR'
 }
 
-export class ErrorMessage{
+export interface ErrorMessage {
     success: boolean;
     errorCode: number;
     message: string;
     data?: string;
 }
+
+const isErrorMessageEnum = (value: unknown): value is ErrorMessageEnum => {
+    return typeof value === 'string' && value in ErrorHandle;
+};
 
 export const serviceError = (errorType: ErrorMessageEnum, data?: any) => {
     return {
@@ -50,7 +54,7 @@ export const ErrorHandler = ( error: any, request: Request, response: Response, 
             data: Object.values(error.constraints)?.length ? Object.values(error.constraints)[0] : null
         });
     // server error
-    } else if (ErrorHandle[error?.errorType]) {
+    } else if (isErrorMessageEnum(error?.errorType)) {
         response.send({
             ...ErrorHandle[error.errorType],
             data: error?.data || error || null

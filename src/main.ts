@@ -1,3 +1,6 @@
+/* Inject Reference */
+import 'reflect-metadata';
+
 /* Import Package */
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
@@ -7,14 +10,12 @@ import httpPino from 'pino-http';
 import { randomUUID } from 'crypto';
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
+import { Request, Response } from 'express';
 import { InversifySocketServer } from 'inversify-socket-utils';
 import { Server } from "socket.io";
 
 /* Enum & Constant */
 import { ErrorHandler } from './common/constants';
-
-/* Inject Reference */
-import 'reflect-metadata';
 
 /* Config & Environment Variables */
 import { containerBinding } from './container';

@@ -1,77 +1,64 @@
-/* Import Package */
-import { connect as amqpCreateConnection, Connection as AmqpConnection } from 'amqplib';
-import { createConnection as typeORMCreateConnection, Connection as TypeORMConnection, getConnection } from 'typeorm';
-
-/* Service Layer */
 import { V1AccountService } from '../../accounts/account.service';
+import { RoleStatusEnum } from '../../common/enums';
 
-/* Repository Layer */
-import { AccountRepository } from '../../accounts/repositories/account.repository';
-import { RoleRepository } from '../../accounts/repositories/role.repository';
+jest.mock('../../accounts/account.event.controller', () => ({
+  createAccountEvent: jest.fn(),
+  updateAccountEvent: jest.fn(),
+}));
 
-/* Define Utils */
-import { clearTable } from '../../utils';
-
-/* Enum & Constant */
-import { AccountStatusEnum, GenderEnum } from '../../common/enums';
-import { ACCOUNTS_TABLE } from '../../accounts/constants/account.constant';
-
-/* Config & Environment Variables */
-import { typeOrmConfig } from '../../typeorm-config';
-const {
-  NODE_ENV,
-  RABBITMQ_USER_NAME,
-  RABBITMQ_PASSWORD,
-  RABBITMQ_MAPPING_PORT,
-  POSTGRESQL_CONNECTION_NAME,
-} = process.env;
-
-jest.mock('../../accounts/account.event.controller');
-
-let accountService: V1AccountService;
-let typeORMConnection: TypeORMConnection;
-let rabbitMQConnection: AmqpConnection;
-let accountRepository: AccountRepository;
-let roleRepository:  RoleRepository;
-
-describe('test accountService', () => {
-  beforeAll(async (done) => {
-    typeORMConnection = await typeORMCreateConnection(typeOrmConfig);
-    rabbitMQConnection= await amqpCreateConnection(
-      `amqp://${RABBITMQ_USER_NAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_MAPPING_PORT}`
-    );
-    accountRepository = getConnection(POSTGRESQL_CONNECTION_NAME).getCustomRepository(AccountRepository);
-    accountService = new V1AccountService(accountRepository,roleRepository,rabbitMQConnection);
-    
-    // need assign test environment, protect other environment data
-    expect(NODE_ENV).toMatch(/^test$|^ci$/);
-    done();
-  });
-
-  afterAll(async() =>{
-    // truncate table data
-    await clearTable(typeORMConnection, ACCOUNTS_TABLE);
-    typeORMConnection.close();
-    rabbitMQConnection.close();
-  });
-
-  it('test findOneAccountById', async (done) => {
-    // create mock data
-    await clearTable(typeORMConnection, ACCOUNTS_TABLE);
-    await accountRepository.save({
-      name: 'josh',
-      email: 'example@mail.com',
-      gender: GenderEnum.MALE,
-      language: 'Japanese',
-      area: 'Asia',
-      country: 'Japan',
-      roles: [1,2,3],
-      status: AccountStatusEnum.ENABLE,
-    });
+describe('V1AccountService', () => {
+  it('finds one account by id through the injected repository', async () => {
+    const accountRepository = {
+      findOneById: jest.fn().mockResolvedValue({ id: 1, name: 'josh' }),
+    } as any;
+    const accountService = new V1AccountService(accountRepository, {} as any, {} as any);
 
     const account = await accountService.findOneAccountById(1);
-    expect(account?.name).toBe('josh');
-    done();
+
+    expect(accountRepository.findOneById).toHaveBeenCalledWith(1);
+    expect(account.name).toBe('josh');
   });
 
+  it('updates account roles and adjusts role counters', async () => {
+    const accountRepository = {
+      findOneById: jest.fn().mockResolvedValue({ id: 1, roles: [1] }),
+      updateOneByDTO: jest.fn().mockResolvedValue({ id: 1, roles: [2] }),
+    } as any;
+    const roleRepository = {
+      findManyByIds: jest
+        .fn()
+        .mockResolvedValueOnce([{ id: 1, isUnique: false, status: RoleStatusEnum.ENABLE }])
+        .mockResolvedValueOnce([{ id: 2, isUnique: false, status: RoleStatusEnum.ENABLE }]),
+      updateManyCountByIds: jest.fn().mockResolvedValue(undefined),
+    } as any;
+    const accountService = new V1AccountService(accountRepository, roleRepository, {} as any);
+
+    await accountService.updateAccountRoleByDTO({ id: 1, roles: [2] });
+
+    expect(accountRepository.updateOneByDTO).toHaveBeenCalledWith({ id: 1, roles: [2] });
+    expect(roleRepository.updateManyCountByIds).toHaveBeenCalledWith([2], [1]);
+  });
+
+  it('rejects multiple unique roles in the same update', async () => {
+    const accountRepository = {
+      findOneById: jest.fn().mockResolvedValue({ id: 1, roles: [] }),
+    } as any;
+    const roleRepository = {
+      findManyByIds: jest
+        .fn()
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([
+          { id: 1, isUnique: true, status: RoleStatusEnum.ENABLE },
+          { id: 2, isUnique: true, status: RoleStatusEnum.ENABLE },
+        ]),
+    } as any;
+    const accountService = new V1AccountService(accountRepository, roleRepository, {} as any);
+
+    try {
+      await accountService.updateAccountRoleByDTO({ id: 1, roles: [1, 2] });
+      fail('expected updateAccountRoleByDTO to throw');
+    } catch (error: any) {
+      expect(error.errorType).toBe('TEMPLATE_ACCOUNT_ROLE_IS_UNIQUE');
+    }
+  });
 });
