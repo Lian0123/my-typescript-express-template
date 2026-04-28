@@ -87,7 +87,7 @@
     "typeorm-i18n": "0.2.0-rc.1",
     "typeorm-transactional-cls-hooked": "^0.1.21",
     "typescript": "4.9.5",
-    "uuid": "8.3.2",
+    "uuid": "14.0.0",
     "valid-env": "1.1.1"
   },
   "devDependencies": {
