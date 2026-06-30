@@ -108,7 +108,7 @@
     "@typescript-eslint/eslint-plugin": "5.62.0",
     "@typescript-eslint/parser": "5.62.0",
     "@webpack-cli/generators": "^3.0.1",
-    "commitizen": "4.2.5",
+    "commitizen": "4.3.2",
     "cz-conventional-changelog": "3.3.0",
     "eslint": "7.32.0",
     "eslint-config-google": "0.14.0",
