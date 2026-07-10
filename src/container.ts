@@ -14,19 +14,23 @@ import { V1RoleController } from './accounts/role.controller';
 import { listenAccountCreatedEvent, listenAccountUpdatedEvent } from './accounts/account.event.controller';
 import { listenRoleCreatedEvent, listenRoleUpdatedEvent } from './accounts/role.event.controller';
 import { ChattingController } from './chatting/chatting.socket.controller';
+import { V1TimeSeriesController } from './timeseries/time-series.controller';
 
 /* Service Layer */
 import { V1AccountService } from './accounts/account.service';
 import { V1RoleService } from './accounts/role.service';
+import { V1TimeSeriesService } from './timeseries/time-series.service';
 
 /* Repository Layer */
 import { AccountRepository } from './accounts/repositories/account.repository';
 import { RoleRepository } from './accounts/repositories/role.repository';
+import { TimeSeriesSampleRepository } from './timeseries/repositories/time-series.repository';
 
 /* Type & Interface */
 import { AccountAO, AccountsAO } from './accounts/ao/account.ao';
 import { RoleAO, RolesAO } from './accounts/ao/role.ao';
 import { PaginationAO } from './common/ao/pagination.ao';
+import { TimeSeriesSampleAO, TimeSeriesSamplesAO, TimeSeriesSummaryAO } from './timeseries/ao/time-series.ao';
 import {
    CreateAccountBodyDTO,
    CreateAccountsBodyDTO,
@@ -39,6 +43,12 @@ import {
    FindRolesQueryDTO,
    UpdateRoleBodyDTO
 } from './accounts/dto/role.controller.dto';
+import {
+   CreateTimeSeriesSampleBodyDTO,
+   CreateTimeSeriesSamplesBodyDTO,
+   FindTimeSeriesSamplesQueryDTO,
+   FindTimeSeriesSummaryQueryDTO
+} from './timeseries/dto/time-series.controller.dto';
 
 /* Config & Environment Variables */
 import { typeOrmConfig } from './typeorm-config';
@@ -98,6 +108,10 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
     .to(V1RoleController)
     .inSingletonScope()
     .whenTargetNamed(V1RoleController.TARGET_NAME);
+  bind<Controller>(API_TYPE.Controller)
+    .to(V1TimeSeriesController)
+    .inSingletonScope()
+    .whenTargetNamed(V1TimeSeriesController.TARGET_NAME);
 
   /**
     * Service Layer
@@ -107,6 +121,9 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
     .inSingletonScope();
   bind<V1RoleService>(V1RoleService.name)
     .to(V1RoleService)
+    .inSingletonScope();
+  bind<V1TimeSeriesService>(V1TimeSeriesService.name)
+    .to(V1TimeSeriesService)
     .inSingletonScope();
 
   /**
@@ -119,6 +136,8 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
     .toConstantValue(typeORMConnection.getCustomRepository(AccountRepository));
   bind<RoleRepository>(RoleRepository.name)
     .toConstantValue(typeORMConnection.getCustomRepository(RoleRepository));
+  bind<TimeSeriesSampleRepository>(TimeSeriesSampleRepository.name)
+    .toConstantValue(typeORMConnection.getCustomRepository(TimeSeriesSampleRepository));
   
   /**
    * Data Transfer Object
@@ -131,6 +150,10 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
   bind<CreateRolesBodyDTO>(CreateRolesBodyDTO.name).to(CreateRolesBodyDTO);
   bind<FindRolesQueryDTO>(FindRolesQueryDTO.name).to(FindRolesQueryDTO);
   bind<UpdateRoleBodyDTO>(UpdateRoleBodyDTO.name).to(UpdateRoleBodyDTO);
+  bind<CreateTimeSeriesSampleBodyDTO>(CreateTimeSeriesSampleBodyDTO.name).to(CreateTimeSeriesSampleBodyDTO);
+  bind<CreateTimeSeriesSamplesBodyDTO>(CreateTimeSeriesSamplesBodyDTO.name).to(CreateTimeSeriesSamplesBodyDTO);
+  bind<FindTimeSeriesSamplesQueryDTO>(FindTimeSeriesSamplesQueryDTO.name).to(FindTimeSeriesSamplesQueryDTO);
+  bind<FindTimeSeriesSummaryQueryDTO>(FindTimeSeriesSummaryQueryDTO.name).to(FindTimeSeriesSummaryQueryDTO);
 
   /**
    * Application Object
@@ -140,6 +163,9 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
   bind<RoleAO>(RoleAO.name).to(RoleAO);
   bind<RolesAO>(RolesAO.name).to(RolesAO);
   bind<PaginationAO>(PaginationAO.name).to(PaginationAO);
+  bind<TimeSeriesSampleAO>(TimeSeriesSampleAO.name).to(TimeSeriesSampleAO);
+  bind<TimeSeriesSamplesAO>(TimeSeriesSamplesAO.name).to(TimeSeriesSamplesAO);
+  bind<TimeSeriesSummaryAO>(TimeSeriesSummaryAO.name).to(TimeSeriesSummaryAO);
 
   /**
    * logger

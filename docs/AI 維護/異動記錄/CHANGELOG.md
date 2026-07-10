@@ -1,4 +1,4 @@
-<!-- AI-DOC: owner=maintainers; verified=2026-07-10; sources=git diff,docs/AI 維護 -->
+<!-- AI-DOC: owner=maintainers; verified=2026-07-10; sources=git diff,docs/AI 維護,src/timeseries -->
 # CHANGELOG
 
 ## 未發佈
@@ -8,6 +8,7 @@
 - 建立繁體中文 AI living documentation，提供單一入口、漸進式讀取、功能定位、品質門檻與風險記憶。
 - 建立文件轉換與依文件維護兩個 project skill。
 - 新增 `npm run docs:verify`，檢查文件結構、metadata 與本地連結。
+- 新增時序資料模組，提供 sample 寫入、時間區間查詢、bucket 彙總與對應 migration。
 
 ### 變更
 

@@ -11,6 +11,8 @@ export enum ErrorMessageEnum {
     TEMPLATE_ROLE_NO_EXIST             = 'TEMPLATE_ROLE_NO_EXIST',
     TEMPLATE_ACCOUNT_ROLE_IS_UNIQUE    = 'TEMPLATE_ACCOUNT_ROLE_IS_UNIQUE',
     TEMPLATE_ACCOUNT_DATA_NOT_FOUND    = 'TEMPLATE_ACCOUNT_DATA_NOT_FOUND',
+    TEMPLATE_TIME_SERIES_RANGE_INVALID = 'TEMPLATE_TIME_SERIES_RANGE_INVALID',
+    TEMPLATE_TIME_SERIES_DATA_NOT_FOUND = 'TEMPLATE_TIME_SERIES_DATA_NOT_FOUND',
     TEMPLATE_SERVER_ERROR              = 'TEMPLATE_SERVER_ERROR'
 }
 
@@ -40,6 +42,8 @@ export const ErrorHandle :Record<ErrorMessageEnum,ErrorMessage> = {
     [ErrorMessageEnum.TEMPLATE_ROLE_NO_EXIST]             : { success: false, errorCode: 400005, message: 'same data not match'},
     [ErrorMessageEnum.TEMPLATE_ACCOUNT_ROLE_IS_UNIQUE]    : { success: false, errorCode: 403001, message: 'account select role is unique'},
     [ErrorMessageEnum.TEMPLATE_ACCOUNT_DATA_NOT_FOUND]    : { success: false, errorCode: 404001, message: 'data not found'},
+    [ErrorMessageEnum.TEMPLATE_TIME_SERIES_RANGE_INVALID] : { success: false, errorCode: 400006, message: 'time series range invalid'},
+    [ErrorMessageEnum.TEMPLATE_TIME_SERIES_DATA_NOT_FOUND] : { success: false, errorCode: 404002, message: 'time series data not found'},
     [ErrorMessageEnum.TEMPLATE_SERVER_ERROR]              : { success: false, errorCode: 500001, message: 'unknown server error'},
 };
 
