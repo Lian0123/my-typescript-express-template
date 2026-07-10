@@ -1,0 +1,4 @@
+interface:
+  display_name: "依 AI 文件維護專案"
+  short_description: "依 living documentation 安全定位、開發、驗證並同步文件"
+  default_prompt: "使用 $maintain-with-ai-docs 依 AI 維護文件完成這項變更並同步文件。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "轉換為 AI 維護文件"
+  short_description: "將既有專案知識轉為低 token、可定位的繁中 living documentation"
+  default_prompt: "使用 $convert-to-ai-docs 將目前專案資訊轉換並整合至 AI 維護文件。"

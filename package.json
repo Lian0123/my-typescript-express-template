@@ -10,6 +10,7 @@
     "preinstall": "chmod +x ./script/shell/*",
     "prebuild": "rimraf dist",
     "build": "tsc",
+    "docs:verify": "node ./script/javascript/verify-ai-docs.js",
     "postbuild": "sh ./script/shell/update-build-file.sh",
     "lint": "eslint . --ext .ts  --fix ",
     "start:dev": "nodemon ./src/main.ts",
