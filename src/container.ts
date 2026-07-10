@@ -25,12 +25,14 @@ import { V1TimeSeriesService } from './timeseries/time-series.service';
 import { AccountRepository } from './accounts/repositories/account.repository';
 import { RoleRepository } from './accounts/repositories/role.repository';
 import { TimeSeriesSampleRepository } from './timeseries/repositories/time-series.repository';
+import { TimeSeriesRollupRepository } from './timeseries/repositories/time-series-rollup.repository';
 
 /* Type & Interface */
 import { AccountAO, AccountsAO } from './accounts/ao/account.ao';
 import { RoleAO, RolesAO } from './accounts/ao/role.ao';
 import { PaginationAO } from './common/ao/pagination.ao';
 import { TimeSeriesSampleAO, TimeSeriesSamplesAO, TimeSeriesSummaryAO } from './timeseries/ao/time-series.ao';
+import { TimeSeriesMaintenanceResultAO } from './timeseries/ao/time-series.maintenance.ao';
 import {
    CreateAccountBodyDTO,
    CreateAccountsBodyDTO,
@@ -49,6 +51,10 @@ import {
    FindTimeSeriesSamplesQueryDTO,
    FindTimeSeriesSummaryQueryDTO
 } from './timeseries/dto/time-series.controller.dto';
+import {
+  DownsampleTimeSeriesSamplesBodyDTO,
+  PruneTimeSeriesSamplesBodyDTO
+} from './timeseries/dto/time-series.maintenance.controller.dto';
 
 /* Config & Environment Variables */
 import { typeOrmConfig } from './typeorm-config';
@@ -138,6 +144,8 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
     .toConstantValue(typeORMConnection.getCustomRepository(RoleRepository));
   bind<TimeSeriesSampleRepository>(TimeSeriesSampleRepository.name)
     .toConstantValue(typeORMConnection.getCustomRepository(TimeSeriesSampleRepository));
+  bind<TimeSeriesRollupRepository>(TimeSeriesRollupRepository.name)
+    .toConstantValue(typeORMConnection.getCustomRepository(TimeSeriesRollupRepository));
   
   /**
    * Data Transfer Object
@@ -152,8 +160,10 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
   bind<UpdateRoleBodyDTO>(UpdateRoleBodyDTO.name).to(UpdateRoleBodyDTO);
   bind<CreateTimeSeriesSampleBodyDTO>(CreateTimeSeriesSampleBodyDTO.name).to(CreateTimeSeriesSampleBodyDTO);
   bind<CreateTimeSeriesSamplesBodyDTO>(CreateTimeSeriesSamplesBodyDTO.name).to(CreateTimeSeriesSamplesBodyDTO);
+  bind<DownsampleTimeSeriesSamplesBodyDTO>(DownsampleTimeSeriesSamplesBodyDTO.name).to(DownsampleTimeSeriesSamplesBodyDTO);
   bind<FindTimeSeriesSamplesQueryDTO>(FindTimeSeriesSamplesQueryDTO.name).to(FindTimeSeriesSamplesQueryDTO);
   bind<FindTimeSeriesSummaryQueryDTO>(FindTimeSeriesSummaryQueryDTO.name).to(FindTimeSeriesSummaryQueryDTO);
+  bind<PruneTimeSeriesSamplesBodyDTO>(PruneTimeSeriesSamplesBodyDTO.name).to(PruneTimeSeriesSamplesBodyDTO);
 
   /**
    * Application Object
@@ -166,6 +176,7 @@ export const containerBinding = new AsyncContainerModule(async (bind) => {
   bind<TimeSeriesSampleAO>(TimeSeriesSampleAO.name).to(TimeSeriesSampleAO);
   bind<TimeSeriesSamplesAO>(TimeSeriesSamplesAO.name).to(TimeSeriesSamplesAO);
   bind<TimeSeriesSummaryAO>(TimeSeriesSummaryAO.name).to(TimeSeriesSummaryAO);
+  bind<TimeSeriesMaintenanceResultAO>(TimeSeriesMaintenanceResultAO.name).to(TimeSeriesMaintenanceResultAO);
 
   /**
    * logger

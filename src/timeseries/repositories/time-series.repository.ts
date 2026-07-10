@@ -13,6 +13,10 @@ import {
   FindManyTimeSeriesSamplesDTO,
   FindManyTimeSeriesSummaryDTO
 } from '../dto/time-series.repository.dto';
+import {
+  DownsampleTimeSeriesSamplesDTO,
+  PruneTimeSeriesSamplesDTO
+} from '../dto/time-series.maintenance.repository.dto';
 
 /* Enum */
 import { TimeSeriesBucketEnum } from '../dto/time-series.controller.dto';
@@ -114,5 +118,51 @@ export class TimeSeriesSampleRepository extends BaseRepository<TimeSeriesSampleE
         sumValue: Number(item.sumValue)
       }))
     };
+  }
+
+  async aggregateByDTO (
+    dto: Pick<DownsampleTimeSeriesSamplesDTO, 'seriesKey' | 'metricName' | 'startAt' | 'endAt' | 'bucket'>
+  ): Promise<Array<TimeSeriesSummaryItemPO & { metricName: string }>> {
+    const queryBuilder = this.createQueryBuilder('samples')
+      .select('samples.metricName', 'metricName')
+      .addSelect(`date_trunc(:bucket, samples.recordedAt)`, 'bucketAt')
+      .addSelect('COUNT(*)', 'count')
+      .addSelect('MIN(samples.value)', 'minValue')
+      .addSelect('MAX(samples.value)', 'maxValue')
+      .addSelect('AVG(samples.value)', 'avgValue')
+      .addSelect('SUM(samples.value)', 'sumValue')
+      .where('samples.seriesKey = :seriesKey', { seriesKey: dto.seriesKey })
+      .andWhere('samples.recordedAt >= :startAt', { startAt: toDate(dto.startAt) })
+      .andWhere('samples.recordedAt < :endAt', { endAt: toDate(dto.endAt) })
+      .groupBy('samples.metricName')
+      .addGroupBy('bucketAt')
+      .orderBy('bucketAt', 'ASC')
+      .setParameter('bucket', dto.bucket);
+
+    if (dto.metricName) {
+      queryBuilder.andWhere('samples.metricName = :metricName', { metricName: dto.metricName });
+    }
+
+    const rawData = await queryBuilder.getRawMany();
+    return rawData.map((item) => ({
+      metricName: item.metricName,
+      bucketAt: new Date(item.bucketAt).toISOString(),
+      count: Number(item.count),
+      minValue: Number(item.minValue),
+      maxValue: Number(item.maxValue),
+      avgValue: Number(item.avgValue),
+      sumValue: Number(item.sumValue)
+    }));
+  }
+
+  async deleteOlderThanByDTO (dto: PruneTimeSeriesSamplesDTO): Promise<number> {
+    const result = await this.createQueryBuilder()
+      .delete()
+      .where(dto.seriesKey ? 'seriesKey = :seriesKey' : '1 = 1', { seriesKey: dto.seriesKey })
+      .andWhere(dto.metricName ? 'metricName = :metricName' : '1 = 1', { metricName: dto.metricName })
+      .andWhere('recordedAt < :olderThan', { olderThan: toDate(dto.olderThan) })
+      .execute();
+
+    return result.affected || 0;
   }
 }

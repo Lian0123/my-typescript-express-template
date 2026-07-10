@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  express-test-template-postgres-db:
+    image: timescale/timescaledb:latest-pg12
+    environment:
+      - POSTGRES_DB=${POSTGRESQL_DATABASE}
+      - POSTGRES_USER=${POSTGRESQL_USER_NAME}
+      - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_TIMEZONE=${POSTGRESQL_TIMEZONE}
+      - TIMESCALEDB_TELEMETRY=off

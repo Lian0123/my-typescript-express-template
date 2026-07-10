@@ -30,6 +30,13 @@ import {
 
 /* AO */
 import { TimeSeriesSampleAO, TimeSeriesSamplesAO, TimeSeriesSummaryAO } from './ao/time-series.ao';
+import { TimeSeriesMaintenanceResultAO } from './ao/time-series.maintenance.ao';
+
+/* DTO */
+import {
+  DownsampleTimeSeriesSamplesBodyDTO,
+  PruneTimeSeriesSamplesBodyDTO
+} from './dto/time-series.maintenance.controller.dto';
 
 /* Utils */
 import { validateClass } from '../utils';
@@ -215,6 +222,68 @@ export class V1TimeSeriesController implements interfaces.Controller {
 
     return TimeSeriesSummaryAO.plainToClass(
       await this.timeSeriesService.summarizeTimeSeriesSamplesByDTO(queryDTO)
+    );
+  }
+
+  @httpPost('/maintenance/downsample')
+  @ApiOperationPost({
+    summary: 'Downsample time series samples into rollups',
+    description: 'Downsample time series samples into rollups',
+    path: '/maintenance/downsample',
+    parameters: {
+      body: {
+        required: true,
+        model: DownsampleTimeSeriesSamplesBodyDTO.name
+      }
+    },
+    responses: {
+      200: {
+        description: 'OK',
+        model: TimeSeriesMaintenanceResultAO.name
+      },
+      400: {
+        description: 'Bad Request'
+      }
+    }
+  })
+  async downsampleTimeSeriesSamplesByDTO (
+    request: Request
+  ): Promise<TimeSeriesMaintenanceResultAO> {
+    const bodyDTO = await validateClass(DownsampleTimeSeriesSamplesBodyDTO, request.body);
+
+    return TimeSeriesMaintenanceResultAO.plainToClass(
+      await this.timeSeriesService.downsampleTimeSeriesSamplesByDTO(bodyDTO)
+    );
+  }
+
+  @httpPost('/maintenance/retention')
+  @ApiOperationPost({
+    summary: 'Prune old time series samples',
+    description: 'Prune old time series samples',
+    path: '/maintenance/retention',
+    parameters: {
+      body: {
+        required: true,
+        model: PruneTimeSeriesSamplesBodyDTO.name
+      }
+    },
+    responses: {
+      200: {
+        description: 'OK',
+        model: TimeSeriesMaintenanceResultAO.name
+      },
+      400: {
+        description: 'Bad Request'
+      }
+    }
+  })
+  async pruneTimeSeriesSamplesByDTO (
+    request: Request
+  ): Promise<TimeSeriesMaintenanceResultAO> {
+    const bodyDTO = await validateClass(PruneTimeSeriesSamplesBodyDTO, request.body);
+
+    return TimeSeriesMaintenanceResultAO.plainToClass(
+      await this.timeSeriesService.pruneTimeSeriesSamplesByDTO(bodyDTO)
     );
   }
 }
