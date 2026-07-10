@@ -1,6 +1,6 @@
 /* Import Package */
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsEnum, IsISO8601, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { getDateTime } from '../../utils';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 
@@ -53,8 +53,8 @@ export class UpdateRoleBodyDTO {
       description: 'Role can assess start at',
       example: getDateTime()
     })
-    @Transform((param :any) => param ? getDateTime(param.value) : null)
-    @IsISO8601()
+    @Transform((param :any) => param ? getDateTime(param.value).toDate() : null)
+    @IsDate()
     @IsOptional()
     assessStartAt?: Date;
 
@@ -62,8 +62,8 @@ export class UpdateRoleBodyDTO {
       description: 'Role can assess end at',
       example: getDateTime().add(10,'day')
     })
-    @Transform((param :any) => param ? getDateTime(param.value) : null)
-    @IsISO8601()
+    @Transform((param :any) => param ? getDateTime(param.value).toDate() : null)
+    @IsDate()
     @IsOptional()
     assessEndAt?: Date;
 
@@ -107,16 +107,16 @@ export class CreateRoleBodyDTO {
       description: 'Role can assess start at',
       example: getDateTime()
     })
-    @Transform((param :any) => param ? getDateTime(param.value) : null)
-    @IsISO8601()
+    @Transform((param :any) => param ? getDateTime(param.value).toDate() : null)
+    @IsDate()
     assessStartAt?: Date;
 
     @ApiModelProperty({
       description: 'Role can assess end at',
       example: getDateTime().add(10,'day')
     })
-    @Transform((param :any) => param ? getDateTime(param.value) : null)
-    @IsISO8601()
+    @Transform((param :any) => param ? getDateTime(param.value).toDate() : null)
+    @IsDate()
     assessEndAt?: Date;
 
     @ApiModelProperty({

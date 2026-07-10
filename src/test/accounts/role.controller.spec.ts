@@ -1,7 +1,9 @@
+/// <reference types="jest" />
+
 import { getMockReq } from '@jest-mock/express';
 
 import { V1RoleController } from '../../accounts/role.controller';
-import { RoleStatusEnum } from '../../common/enums';
+import { RoleNameEnum, RoleStatusEnum } from '../../common/enums';
 
 describe('V1RoleController', () => {
   it('deletes one role after validating the route param', async () => {
@@ -17,6 +19,32 @@ describe('V1RoleController', () => {
     await roleController.deleteRoleById(request);
 
     expect(roleService.deleteOneRoleById).toHaveBeenCalledWith(11);
+  });
+
+  it('creates one role through the service', async () => {
+    const roleService = {
+      createOneRoleByDTO: jest.fn().mockResolvedValue(undefined),
+    } as any;
+    const roleController = new V1RoleController(roleService);
+
+    const request = getMockReq({
+      body: {
+        name: RoleNameEnum.ADMIN,
+        status: RoleStatusEnum.ENABLE,
+        isUnique: false,
+        assessStartAt: '2026-07-10T00:00:00.000Z',
+        assessEndAt: '2026-07-11T00:00:00.000Z',
+        applyCount: 5,
+      },
+    });
+
+    await roleController.createRoleByDTO(request);
+
+    expect(roleService.createOneRoleByDTO).toHaveBeenCalledWith(expect.objectContaining({
+      name: RoleNameEnum.ADMIN,
+      status: RoleStatusEnum.ENABLE,
+      isUnique: false,
+    }));
   });
 
   it('merges params and body when updating a role', async () => {

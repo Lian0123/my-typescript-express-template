@@ -1,4 +1,5 @@
 import { RoleRepository } from '../../accounts/repositories/role.repository';
+import { RoleNameEnum, RoleStatusEnum } from '../../common/enums';
 
 describe('RoleRepository', () => {
   it('returns an empty list without querying when ids are empty', async () => {
@@ -33,6 +34,54 @@ describe('RoleRepository', () => {
       applyCount: 10,
     }));
     expect(role.id).toBe(1);
+  });
+
+  it('returns one role by id', async () => {
+    const repository = Object.create(RoleRepository.prototype) as RoleRepository & {
+      findOne: jest.Mock;
+    };
+    repository.findOne = jest.fn().mockResolvedValue({ id: 2, name: 'ADMIN' });
+
+    const role = await repository.findOneById(2);
+
+    expect(repository.findOne).toHaveBeenCalledWith({ id: 2 });
+    expect(role.id).toBe(2);
+  });
+
+  it('updates one role through query builder', async () => {
+    const builder = {
+      update: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      returning: jest.fn().mockReturnThis(),
+      execute: jest.fn().mockResolvedValue({ raw: [{ id: 1, name: RoleNameEnum.ADMIN }] }),
+    };
+    const repository = Object.create(RoleRepository.prototype) as RoleRepository & {
+      createQueryBuilder: jest.Mock;
+    };
+    repository.createQueryBuilder = jest.fn().mockReturnValue(builder);
+
+    const role = await repository.updateOneByDTO({
+      id: 1,
+      name: RoleNameEnum.ADMIN,
+      status: RoleStatusEnum.ENABLE,
+    });
+
+    expect(builder.update).toHaveBeenCalledWith(expect.objectContaining({
+      name: RoleNameEnum.ADMIN,
+      status: RoleStatusEnum.ENABLE,
+    }));
+    expect(role.id).toBe(1);
+  });
+
+  it('soft deletes one role by updating isDeleted', async () => {
+    const repository = Object.create(RoleRepository.prototype) as RoleRepository & {
+      update: jest.Mock;
+    };
+    repository.update = jest.fn().mockResolvedValue(undefined);
+
+    await repository.deleteOneById(9);
+
+    expect(repository.update).toHaveBeenCalledWith({ id: 9 }, { isDeleted: true });
   });
 
   it('maps getManyAndCount to items and pagination', async () => {
